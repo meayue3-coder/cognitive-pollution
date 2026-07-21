@@ -1,858 +1,2321 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>认知污染 | COGNITIVE POLLUTION</title>
 
-  <title>认知污染 | COGNITIVE POLLUTION</title>
+<style>
+:root{
+  --red:#a51f3c;
+  --bright:#e44763;
+  --white:#f4f4f6;
+  --gray:#a1a3ad;
+  --dark:#030409;
+  --panel:rgba(5,6,12,.88);
+}
 
-  <style>
-    :root {
-      --red: #a01f3a;
-      --red-bright: #d23a59;
-      --white: #f2f3f7;
-      --gray: #a7a9b2;
-      --dark: #030409;
-      --panel: rgba(4, 5, 11, 0.78);
-    }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+html{
+  scroll-behavior:smooth;
+}
 
-    html {
-      scroll-behavior: smooth;
-    }
+body{
+  width:100%;
+  min-height:100vh;
+  overflow:hidden;
+  background:var(--dark);
+  color:var(--white);
+  font-family:"Microsoft YaHei","Noto Sans SC",Arial,sans-serif;
+}
 
-    body {
-      width: 100%;
-      min-height: 100vh;
-      overflow: hidden;
-      background: var(--dark);
-      color: var(--white);
-      font-family:
-        "Microsoft YaHei",
-        "Noto Sans SC",
-        Arial,
-        sans-serif;
-    }
+button{
+  font:inherit;
+}
 
-    button {
-      font: inherit;
-    }
+/* 启动画面 */
+#boot{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#020308;
+  transition:opacity .7s,visibility .7s;
+}
 
-    /* 原始图片直接加载，不会修改或重新压缩 GitHub 中的 hero.png */
-    .hero-image {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      object-position: center;
-      user-select: none;
-      pointer-events: none;
-      animation: imageEntrance 2.2s ease-out both;
-    }
+#boot.hide{
+  opacity:0;
+  visibility:hidden;
+}
 
-    @keyframes imageEntrance {
-      from {
-        opacity: 0;
-        transform: scale(1.035);
-        filter: brightness(0.45);
-      }
+.boot-box{
+  width:min(520px,82vw);
+}
 
-      to {
-        opacity: 1;
-        transform: scale(1);
-        filter: brightness(1);
-      }
-    }
+.boot-code{
+  margin-bottom:22px;
+  color:rgba(255,255,255,.48);
+  font-size:11px;
+  letter-spacing:.35em;
+}
 
-    .dark-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(1, 2, 7, 0.96) 0%,
-          rgba(1, 2, 7, 0.78) 25%,
-          rgba(1, 2, 7, 0.27) 55%,
-          rgba(1, 2, 7, 0.16) 76%,
-          rgba(1, 2, 7, 0.42) 100%
-        ),
-        linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0.78) 0%,
-          transparent 45%,
-          rgba(0, 0, 0, 0.32) 100%
-        );
-    }
+.boot-title{
+  margin-bottom:26px;
+  font-size:clamp(22px,4vw,42px);
+  letter-spacing:.28em;
+}
 
-    .vignette {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      box-shadow:
-        inset 0 0 180px 45px rgba(0, 0, 0, 0.86);
-    }
+.boot-line{
+  width:100%;
+  height:2px;
+  overflow:hidden;
+  background:rgba(255,255,255,.12);
+}
 
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      z-index: 7;
-      opacity: 0.22;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 3px,
-        rgba(255, 255, 255, 0.025) 4px
+.boot-progress{
+  width:0;
+  height:100%;
+  background:var(--bright);
+  box-shadow:0 0 18px var(--bright);
+}
+
+.boot-bottom{
+  display:flex;
+  justify-content:space-between;
+  margin-top:13px;
+  color:rgba(255,255,255,.5);
+  font-size:10px;
+  letter-spacing:.2em;
+}
+
+/* 首页背景 */
+.hero-image{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  pointer-events:none;
+  user-select:none;
+  animation:heroIn 2s ease-out both;
+}
+
+@keyframes heroIn{
+  from{
+    opacity:0;
+    transform:scale(1.04);
+    filter:brightness(.4);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+    filter:brightness(1);
+  }
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2,3,8,.97) 0%,
+      rgba(2,3,8,.84) 24%,
+      rgba(2,3,8,.36) 55%,
+      rgba(2,3,8,.16) 76%,
+      rgba(2,3,8,.42) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.78),
+      transparent 50%
+    );
+}
+
+.vignette{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  box-shadow:inset 0 0 190px 45px rgba(0,0,0,.9);
+}
+
+.scanlines{
+  position:fixed;
+  inset:0;
+  z-index:30;
+  pointer-events:none;
+  opacity:.2;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(255,255,255,.025) 4px
+  );
+}
+
+.noise{
+  position:fixed;
+  inset:-50%;
+  z-index:3;
+  pointer-events:none;
+  opacity:.035;
+  background-image:radial-gradient(#fff .6px,transparent .6px);
+  background-size:5px 5px;
+  animation:noiseMove .25s steps(2) infinite;
+}
+
+@keyframes noiseMove{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(1%,-1%)}
+  50%{transform:translate(-1%,1%)}
+  75%{transform:translate(1%,1%)}
+  100%{transform:translate(0,0)}
+}
+
+/* 首页 */
+.home{
+  position:relative;
+  z-index:5;
+  width:100%;
+  height:100vh;
+  padding:6vh 5vw 5vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:opacity .45s,visibility .45s;
+}
+
+.home.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.system-code{
+  color:rgba(255,255,255,.5);
+  font-size:10px;
+  letter-spacing:.34em;
+}
+
+.system-status{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:rgba(255,255,255,.55);
+  font-size:10px;
+  letter-spacing:.22em;
+}
+
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--bright);
+  box-shadow:0 0 14px var(--bright);
+  animation:pulse 1.7s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:.35;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.2)}
+}
+
+.home-content{
+  width:min(760px,86vw);
+  margin-top:auto;
+  margin-bottom:7vh;
+  animation:fadeUp 1.2s .4s both;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(24px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.english-title{
+  margin-bottom:17px;
+  color:rgba(255,255,255,.65);
+  font-size:clamp(11px,1.1vw,17px);
+  letter-spacing:.65em;
+}
+
+.main-title{
+  position:relative;
+  display:inline-block;
+  font-size:clamp(57px,8vw,120px);
+  line-height:1;
+  white-space:nowrap;
+  letter-spacing:.12em;
+  text-shadow:
+    3px 0 rgba(190,23,53,.46),
+    -3px 0 rgba(50,90,140,.35),
+    0 0 26px rgba(255,255,255,.12);
+  animation:titleGlitch 5s infinite;
+}
+
+.main-title::after{
+  content:"认知污染";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  color:rgba(210,31,65,.25);
+  transform:translateX(5px);
+  clip-path:inset(58% 0 18% 0);
+}
+
+@keyframes titleGlitch{
+  0%,87%,92%,100%{transform:none}
+  88%{transform:translate(4px,-1px)}
+  89%{transform:translate(-5px,1px)}
+  90%{transform:translate(2px,0)}
+  91%{transform:translate(-1px,0)}
+}
+
+.home-quote{
+  max-width:620px;
+  margin-top:30px;
+  padding-left:18px;
+  border-left:2px solid var(--red);
+  color:rgba(255,255,255,.77);
+  font-size:clamp(13px,1.15vw,17px);
+  line-height:2;
+  letter-spacing:.13em;
+}
+
+.home-actions{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:38px;
+}
+
+.primary-button,
+.sound-button{
+  height:54px;
+  border:1px solid rgba(200,40,70,.85);
+  background:rgba(3,4,9,.48);
+  color:#fff;
+  cursor:pointer;
+  letter-spacing:.25em;
+  transition:.25s;
+}
+
+.primary-button{
+  width:250px;
+}
+
+.sound-button{
+  width:160px;
+  color:rgba(255,255,255,.75);
+  border-color:rgba(255,255,255,.25);
+}
+
+.primary-button:hover,
+.sound-button:hover{
+  transform:translateY(-2px);
+  background:rgba(145,24,50,.82);
+  border-color:var(--bright);
+  box-shadow:0 0 28px rgba(180,30,60,.42);
+}
+
+.bottom-info{
+  display:flex;
+  flex-wrap:wrap;
+  gap:35px;
+}
+
+.bottom-info div{
+  color:rgba(255,255,255,.45);
+  font-size:10px;
+  letter-spacing:.2em;
+}
+
+.bottom-info strong{
+  display:block;
+  margin-top:7px;
+  color:rgba(255,255,255,.88);
+  font-size:12px;
+  font-weight:400;
+}
+
+/* 数据库 */
+.database{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:grid;
+  grid-template-columns:270px minmax(0,1fr);
+  visibility:hidden;
+  opacity:0;
+  background:rgba(2,3,8,.94);
+  backdrop-filter:blur(16px);
+  transition:opacity .45s,visibility .45s;
+}
+
+.database.open{
+  visibility:visible;
+  opacity:1;
+}
+
+.sidebar{
+  position:relative;
+  padding:6vh 25px 4vh 3vw;
+  overflow:auto;
+  border-right:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.18);
+}
+
+.sidebar-logo{
+  margin-bottom:10px;
+  font-size:20px;
+  letter-spacing:.2em;
+}
+
+.sidebar-subtitle{
+  margin-bottom:38px;
+  color:rgba(255,255,255,.38);
+  font-size:9px;
+  line-height:1.8;
+  letter-spacing:.25em;
+}
+
+.nav-button{
+  width:100%;
+  margin-bottom:7px;
+  padding:16px 12px;
+  border:0;
+  border-left:2px solid transparent;
+  background:transparent;
+  color:rgba(255,255,255,.52);
+  text-align:left;
+  cursor:pointer;
+  letter-spacing:.16em;
+  transition:.22s;
+}
+
+.nav-button:hover,
+.nav-button.active{
+  padding-left:20px;
+  border-left-color:var(--bright);
+  background:linear-gradient(
+    90deg,
+    rgba(161,26,55,.25),
+    transparent
+  );
+  color:#fff;
+}
+
+.sidebar-footer{
+  position:absolute;
+  left:3vw;
+  bottom:4vh;
+  color:rgba(255,255,255,.27);
+  font-size:9px;
+  line-height:1.8;
+  letter-spacing:.18em;
+}
+
+.database-main{
+  position:relative;
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+  min-width:0;
+  height:100vh;
+}
+
+.file-list{
+  padding:7vh 18px 4vh;
+  overflow:auto;
+  border-right:1px solid rgba(255,255,255,.1);
+}
+
+.file-list-title{
+  margin-bottom:22px;
+  color:rgba(255,255,255,.35);
+  font-size:9px;
+  letter-spacing:.27em;
+}
+
+.file-button{
+  width:100%;
+  margin-bottom:9px;
+  padding:15px 13px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.018);
+  color:rgba(255,255,255,.54);
+  text-align:left;
+  cursor:pointer;
+  line-height:1.6;
+  transition:.22s;
+}
+
+.file-button small{
+  display:block;
+  margin-bottom:4px;
+  color:rgba(255,255,255,.28);
+  font-size:8px;
+  letter-spacing:.18em;
+}
+
+.file-button:hover,
+.file-button.active{
+  border-color:rgba(200,39,70,.55);
+  background:rgba(132,19,44,.17);
+  color:#fff;
+}
+
+.article{
+  position:relative;
+  padding:7vh 6vw 8vh;
+  overflow:auto;
+}
+
+.close-button{
+  position:fixed;
+  top:3vh;
+  right:3vw;
+  z-index:28;
+  width:48px;
+  height:48px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(3,4,9,.65);
+  color:#fff;
+  cursor:pointer;
+  font-size:22px;
+}
+
+.close-button:hover{
+  border-color:var(--bright);
+  color:var(--bright);
+}
+
+.article-code{
+  margin-bottom:14px;
+  color:var(--bright);
+  font-size:10px;
+  letter-spacing:.3em;
+}
+
+.article-title{
+  margin-bottom:9px;
+  font-size:clamp(32px,4.5vw,68px);
+  letter-spacing:.12em;
+  font-weight:500;
+}
+
+.article-subtitle{
+  margin-bottom:40px;
+  color:rgba(255,255,255,.42);
+  font-size:11px;
+  letter-spacing:.22em;
+}
+
+.article-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(240px,38%);
+  gap:50px;
+  align-items:start;
+}
+
+.article-layout.no-image{
+  grid-template-columns:minmax(0,850px);
+}
+
+.article-text{
+  max-width:850px;
+}
+
+.article-text h3{
+  margin:35px 0 16px;
+  padding-left:13px;
+  border-left:2px solid var(--red);
+  font-size:17px;
+  font-weight:500;
+  letter-spacing:.13em;
+}
+
+.article-text p{
+  margin-bottom:18px;
+  color:rgba(255,255,255,.7);
+  font-size:14px;
+  line-height:2.05;
+  letter-spacing:.065em;
+}
+
+.article-text .lead{
+  color:rgba(255,255,255,.94);
+  font-size:clamp(18px,2vw,27px);
+  line-height:1.8;
+}
+
+.quote-box{
+  margin:28px 0;
+  padding:22px 25px;
+  border:1px solid rgba(195,32,64,.35);
+  border-left:3px solid var(--bright);
+  background:rgba(125,17,40,.1);
+  color:rgba(255,255,255,.9);
+  font-size:16px;
+  line-height:2;
+  letter-spacing:.09em;
+}
+
+.data-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:30px;
+}
+
+.data-item{
+  padding:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.018);
+}
+
+.data-item span{
+  display:block;
+  margin-bottom:7px;
+  color:rgba(255,255,255,.32);
+  font-size:9px;
+  letter-spacing:.18em;
+}
+
+.data-item strong{
+  color:rgba(255,255,255,.84);
+  font-size:13px;
+  font-weight:400;
+  line-height:1.7;
+}
+
+.warning{
+  margin:30px 0;
+  padding:18px 20px;
+  border:1px solid rgba(215,43,75,.42);
+  background:rgba(145,18,42,.12);
+  color:#efa4b2;
+  line-height:1.9;
+  letter-spacing:.08em;
+}
+
+.character-image-box{
+  position:sticky;
+  top:7vh;
+  min-height:550px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  background:
+    linear-gradient(0deg,rgba(0,0,0,.7),transparent 55%),
+    radial-gradient(circle at 50% 35%,rgba(147,24,53,.15),transparent 55%);
+}
+
+.character-image-box::before{
+  content:"IDENTITY SCAN";
+  position:absolute;
+  top:16px;
+  left:16px;
+  color:rgba(255,255,255,.27);
+  font-size:9px;
+  letter-spacing:.25em;
+}
+
+.character-image{
+  width:100%;
+  max-height:76vh;
+  object-fit:contain;
+  object-position:center bottom;
+  filter:drop-shadow(0 12px 25px rgba(0,0,0,.75));
+}
+
+.image-label{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  padding-top:13px;
+  border-top:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.6);
+  font-size:9px;
+  letter-spacing:.2em;
+}
+
+.theme-box{
+  margin-top:40px;
+  padding:28px;
+  border-top:1px solid rgba(255,255,255,.15);
+  border-bottom:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  font-size:17px;
+  line-height:2;
+  text-align:center;
+  letter-spacing:.1em;
+}
+
+/* 小故障闪烁 */
+.flash{
+  animation:flashEffect .28s;
+}
+
+@keyframes flashEffect{
+  0%{filter:none}
+  25%{filter:contrast(2) brightness(1.5);transform:translateX(3px)}
+  50%{filter:hue-rotate(18deg);transform:translateX(-3px)}
+  100%{filter:none;transform:none}
+}
+
+/* 手机端 */
+@media(max-width:900px){
+  body{
+    overflow:auto;
+  }
+
+  .hero-image{
+    object-position:56% center;
+  }
+
+  .overlay{
+    background:
+      linear-gradient(
+        0deg,
+        rgba(2,3,8,.97) 0%,
+        rgba(2,3,8,.78) 48%,
+        rgba(2,3,8,.22) 100%
       );
-    }
+  }
 
-    .noise {
-      position: fixed;
-      inset: -50%;
-      z-index: 3;
-      opacity: 0.035;
-      pointer-events: none;
-      background-image:
-        radial-gradient(#fff 0.6px, transparent 0.6px);
-      background-size: 5px 5px;
-      animation: noiseMove 0.25s steps(2) infinite;
-    }
+  .home{
+    min-height:100svh;
+    height:auto;
+    padding:5vh 7vw;
+  }
 
-    @keyframes noiseMove {
-      0% {
-        transform: translate(0, 0);
-      }
+  .home-content{
+    width:100%;
+    margin-top:auto;
+    margin-bottom:5vh;
+  }
 
-      25% {
-        transform: translate(1%, -1%);
-      }
+  .main-title{
+    font-size:clamp(45px,14vw,74px);
+    letter-spacing:.06em;
+  }
 
-      50% {
-        transform: translate(-1%, 1%);
-      }
+  .home-actions{
+    flex-wrap:wrap;
+  }
 
-      75% {
-        transform: translate(1%, 1%);
-      }
+  .primary-button{
+    width:220px;
+  }
 
-      100% {
-        transform: translate(0, 0);
-      }
-    }
+  .sound-button{
+    width:145px;
+  }
 
-    .red-line {
-      position: fixed;
-      left: 0;
-      top: 72%;
-      z-index: 4;
-      width: 100%;
-      height: 1px;
-      pointer-events: none;
-      opacity: 0.45;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--red) 15%,
-        var(--red-bright) 34%,
-        transparent 70%
-      );
-    }
+  .database{
+    display:block;
+    overflow:auto;
+  }
 
-    .interface {
-      position: relative;
-      z-index: 5;
-      width: 100%;
-      height: 100vh;
-      padding: 6vh 5vw 5vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+  .sidebar{
+    position:relative;
+    height:auto;
+    padding:24px 20px 15px;
+    border-right:0;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      opacity: 0;
-      animation: fadeUp 1s 0.5s forwards;
-    }
+  .sidebar-logo{
+    font-size:17px;
+  }
 
-    .system-code {
-      font-size: 11px;
-      letter-spacing: 0.38em;
-      color: rgba(255, 255, 255, 0.52);
-    }
+  .sidebar-subtitle{
+    margin-bottom:15px;
+  }
 
-    .system-state {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      color: rgba(255, 255, 255, 0.56);
-    }
+  .nav-button{
+    display:inline-block;
+    width:auto;
+    margin:0 4px 7px 0;
+    padding:10px;
+    border-left:0;
+    border-bottom:2px solid transparent;
+  }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--red-bright);
-      box-shadow: 0 0 14px var(--red-bright);
-      animation: pulse 1.8s infinite;
-    }
+  .nav-button:hover,
+  .nav-button.active{
+    padding-left:10px;
+    border-left:0;
+    border-bottom-color:var(--bright);
+  }
 
-    @keyframes pulse {
-      0%,
-      100% {
-        opacity: 0.35;
-        transform: scale(0.8);
-      }
+  .sidebar-footer{
+    display:none;
+  }
 
-      50% {
-        opacity: 1;
-        transform: scale(1.2);
-      }
-    }
+  .database-main{
+    display:block;
+    height:auto;
+  }
 
-    .main-content {
-      width: min(720px, 80vw);
-      margin-top: auto;
-      margin-bottom: 8vh;
-      opacity: 0;
-      animation: fadeUp 1.2s 0.75s forwards;
-    }
+  .file-list{
+    padding:18px 18px 8px;
+    border-right:0;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    white-space:nowrap;
+    overflow-x:auto;
+  }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
+  .file-list-title{
+    margin-bottom:10px;
+  }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+  .file-button{
+    display:inline-block;
+    width:210px;
+    margin-right:7px;
+    white-space:normal;
+    vertical-align:top;
+  }
 
-    .english-title {
-      margin-bottom: 16px;
-      font-size: clamp(11px, 1.1vw, 17px);
-      letter-spacing: 0.66em;
-      color: rgba(255, 255, 255, 0.66);
-    }
+  .article{
+    padding:35px 7vw 80px;
+    overflow:visible;
+  }
 
-    .title {
-      position: relative;
-      display: inline-block;
-      font-size: clamp(58px, 8vw, 120px);
-      line-height: 1;
-      letter-spacing: 0.13em;
-      white-space: nowrap;
-      font-weight: 700;
-      text-shadow:
-        3px 0 rgba(180, 19, 49, 0.45),
-        -3px 0 rgba(44, 83, 129, 0.35),
-        0 0 26px rgba(255, 255, 255, 0.13);
-      animation: titleGlitch 5.4s infinite;
-    }
+  .article-layout,
+  .article-layout.no-image{
+    display:flex;
+    flex-direction:column-reverse;
+    gap:28px;
+  }
 
-    .title::after {
-      content: "认知污染";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      color: rgba(197, 28, 59, 0.28);
-      transform: translateX(5px);
-      clip-path: inset(58% 0 19% 0);
-    }
+  .character-image-box{
+    position:relative;
+    top:auto;
+    width:100%;
+    min-height:420px;
+  }
 
-    @keyframes titleGlitch {
-      0%,
-      87%,
-      92%,
-      100% {
-        transform: translate(0);
-        filter: none;
-      }
+  .character-image{
+    max-height:550px;
+  }
 
-      88% {
-        transform: translate(4px, -1px);
-        filter: contrast(1.4);
-      }
+  .data-grid{
+    grid-template-columns:1fr;
+  }
 
-      89% {
-        transform: translate(-5px, 1px);
-      }
+  .close-button{
+    top:18px;
+    right:18px;
+  }
 
-      90% {
-        transform: translate(2px, 0);
-      }
+  .bottom-info{
+    gap:17px;
+  }
+}
 
-      91% {
-        transform: translate(-1px, 0);
-      }
-    }
+@media(max-width:520px){
+  .system-status{
+    display:none;
+  }
 
-    .quote {
-      max-width: 570px;
-      margin-top: 30px;
-      padding: 2px 0 2px 18px;
-      border-left: 2px solid rgba(172, 29, 57, 0.9);
-      color: rgba(255, 255, 255, 0.76);
-      font-size: clamp(13px, 1.15vw, 17px);
-      line-height: 2;
-      letter-spacing: 0.15em;
-    }
+  .system-code{
+    max-width:85%;
+    line-height:1.8;
+  }
 
-    .enter-button {
-      position: relative;
-      width: 250px;
-      height: 54px;
-      margin-top: 38px;
-      overflow: hidden;
-      border: 1px solid rgba(190, 38, 66, 0.9);
-      background: rgba(3, 4, 9, 0.48);
-      color: white;
-      cursor: pointer;
-      letter-spacing: 0.35em;
-      transition:
-        border-color 0.25s,
-        box-shadow 0.25s,
-        transform 0.25s;
-    }
+  .english-title{
+    letter-spacing:.38em;
+  }
 
-    .enter-button::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: rgba(139, 21, 45, 0.9);
-      transform: translateX(-102%);
-      transition: transform 0.3s ease;
-    }
+  .home-quote{
+    font-size:12px;
+    letter-spacing:.06em;
+  }
 
-    .enter-button:hover::before {
-      transform: translateX(0);
-    }
+  .primary-button,
+  .sound-button{
+    width:100%;
+  }
 
-    .enter-button:hover {
-      transform: translateY(-2px);
-      border-color: var(--red-bright);
-      box-shadow:
-        0 0 30px rgba(170, 29, 56, 0.45),
-        inset 0 0 20px rgba(255, 255, 255, 0.04);
-    }
-
-    .bottom-info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 36px;
-      opacity: 0;
-      animation: fadeUp 1s 1s forwards;
-    }
-
-    .info-item {
-      color: rgba(255, 255, 255, 0.48);
-      font-size: 10px;
-      letter-spacing: 0.23em;
-    }
-
-    .info-item strong {
-      display: block;
-      margin-top: 7px;
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 12px;
-      font-weight: normal;
-      letter-spacing: 0.18em;
-    }
-
-    /* 点击 ENTER 后出现的主菜单 */
-    .database {
-      position: fixed;
-      inset: 0;
-      z-index: 8;
-      padding: 7vh 6vw;
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
-      gap: 40px;
-      visibility: hidden;
-      opacity: 0;
-      background: rgba(2, 3, 8, 0.88);
-      backdrop-filter: blur(13px);
-      transition:
-        opacity 0.45s ease,
-        visibility 0.45s;
-    }
-
-    .database.open {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .database-sidebar {
-      padding-right: 25px;
-      border-right: 1px solid rgba(255, 255, 255, 0.14);
-    }
-
-    .database-label {
-      margin-bottom: 35px;
-      color: rgba(255, 255, 255, 0.43);
-      font-size: 10px;
-      letter-spacing: 0.4em;
-    }
-
-    .menu-button {
-      width: 100%;
-      padding: 17px 14px;
-      border: 0;
-      border-left: 2px solid transparent;
-      background: transparent;
-      color: rgba(255, 255, 255, 0.58);
-      text-align: left;
-      letter-spacing: 0.2em;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    .menu-button:hover,
-    .menu-button.active {
-      border-left-color: var(--red-bright);
-      background: linear-gradient(
-        90deg,
-        rgba(150, 23, 49, 0.22),
-        transparent
-      );
-      color: white;
-      padding-left: 22px;
-    }
-
-    .database-content {
-      position: relative;
-      overflow: auto;
-      padding: 3vh 2vw;
-    }
-
-    .database-content h2 {
-      margin-bottom: 28px;
-      font-size: clamp(30px, 4vw, 56px);
-      letter-spacing: 0.16em;
-      font-weight: normal;
-    }
-
-    .database-content p {
-      max-width: 680px;
-      color: rgba(255, 255, 255, 0.65);
-      line-height: 2.1;
-      letter-spacing: 0.1em;
-    }
-
-    .file-card {
-      max-width: 720px;
-      margin-top: 30px;
-      padding: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      border-left: 2px solid var(--red);
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .file-card small {
-      color: rgba(255, 255, 255, 0.4);
-      letter-spacing: 0.25em;
-    }
-
-    .file-card h3 {
-      margin: 12px 0;
-      letter-spacing: 0.15em;
-      font-weight: normal;
-    }
-
-    .close-button {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: transparent;
-      color: white;
-      cursor: pointer;
-      font-size: 20px;
-    }
-
-    .close-button:hover {
-      border-color: var(--red-bright);
-      color: var(--red-bright);
-    }
-
-    @media (max-width: 760px) {
-      body {
-        overflow: auto;
-      }
-
-      .hero-image {
-        object-position: 55% center;
-      }
-
-      .dark-overlay {
-        background:
-          linear-gradient(
-            0deg,
-            rgba(1, 2, 7, 0.96) 0%,
-            rgba(1, 2, 7, 0.72) 42%,
-            rgba(1, 2, 7, 0.2) 100%
-          );
-      }
-
-      .interface {
-        min-height: 100svh;
-        padding: 7vh 7vw 5vh;
-      }
-
-      .system-code {
-        max-width: 70%;
-        line-height: 1.8;
-      }
-
-      .main-content {
-        width: 100%;
-        margin-bottom: 6vh;
-      }
-
-      .title {
-        font-size: clamp(44px, 14vw, 75px);
-        letter-spacing: 0.08em;
-      }
-
-      .quote {
-        font-size: 12px;
-        letter-spacing: 0.08em;
-      }
-
-      .enter-button {
-        width: 220px;
-      }
-
-      .bottom-info {
-        gap: 18px;
-      }
-
-      .database {
-        padding: 5vh 5vw;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        overflow: auto;
-      }
-
-      .database-sidebar {
-        padding-right: 0;
-        padding-bottom: 18px;
-        border-right: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-      }
-
-      .menu-button {
-        display: inline-block;
-        width: auto;
-        margin-right: 6px;
-        padding: 11px;
-      }
-
-      .menu-button:hover,
-      .menu-button.active {
-        padding-left: 11px;
-      }
-    }
-  </style>
+  .character-image-box{
+    min-height:350px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- 必须与 index.html 放在同一个仓库目录中 -->
-  <img
-    class="hero-image"
-    src="hero.png"
-    alt="认知污染主视觉"
-  >
+<audio id="bgm" loop preload="auto">
+  <source src="bgm.mp3" type="audio/mpeg">
+</audio>
 
-  <div class="dark-overlay"></div>
-  <div class="vignette"></div>
-  <div class="noise"></div>
-  <div class="scanlines"></div>
-  <div class="red-line"></div>
+<div id="boot">
+  <div class="boot-box">
+    <div class="boot-code">
+      HONGLIN INTERNAL SYSTEM
+    </div>
 
-  <main class="interface" id="homeInterface">
+    <div class="boot-title">
+      MEMORY RECOVERY
+    </div>
 
-    <header class="top-bar">
-      <div class="system-code">
-        HONGLIN RESEARCH DATABASE // FILE 001
-      </div>
+    <div class="boot-line">
+      <div class="boot-progress" id="bootProgress"></div>
+    </div>
 
-      <div class="system-state">
-        <span class="status-dot"></span>
-        SYSTEM RECOVERING
-      </div>
-    </header>
+    <div class="boot-bottom">
+      <span id="bootText">LOADING DATABASE...</span>
+      <span id="bootNumber">0%</span>
+    </div>
+  </div>
+</div>
 
-    <section class="main-content">
+<img
+  class="hero-image"
+  src="hero.png"
+  alt="认知污染主视觉"
+>
 
-      <div class="english-title">
-        COGNITIVE POLLUTION
-      </div>
+<div class="overlay"></div>
+<div class="vignette"></div>
+<div class="noise"></div>
+<div class="scanlines"></div>
 
-      <h1 class="title">
-        认知污染
-      </h1>
+<main class="home" id="home">
 
-      <div class="quote">
-        所有人都确信自己记得真相。<br>
-        可真相，从来没有存在过。
-      </div>
+  <header class="topbar">
+    <div class="system-code">
+      HONGLIN RESEARCH DATABASE // FILE 001
+    </div>
 
+    <div class="system-status">
+      <span class="status-dot"></span>
+      SYSTEM RECOVERING
+    </div>
+  </header>
+
+  <section class="home-content">
+
+    <div class="english-title">
+      COGNITIVE POLLUTION
+    </div>
+
+    <h1 class="main-title">
+      认知污染
+    </h1>
+
+    <div class="home-quote">
+      所有人都确信自己记得真相。<br>
+      可真相，从来没有存在过。
+    </div>
+
+    <div class="home-actions">
       <button
-        class="enter-button"
+        class="primary-button"
         type="button"
-        onclick="openDatabase()"
+        onclick="enterSystem()"
       >
         ENTER SYSTEM
       </button>
 
-    </section>
-
-    <footer class="bottom-info">
-
-      <div class="info-item">
-        PROJECT
-        <strong>COGNITIVE POLLUTION</strong>
-      </div>
-
-      <div class="info-item">
-        STATUS
-        <strong>RECOVERING</strong>
-      </div>
-
-      <div class="info-item">
-        RECORD
-        <strong>NO. 001</strong>
-      </div>
-
-    </footer>
-
-  </main>
-
-  <section class="database" id="database">
-
-    <aside class="database-sidebar">
-
-      <div class="database-label">
-        PROJECT DATABASE
-      </div>
-
       <button
-        class="menu-button active"
-        onclick="showSection('overview', this)"
-      >
-        00 / 项目档案
-      </button>
-
-      <button
-        class="menu-button"
-        onclick="showSection('characters', this)"
-      >
-        01 / 角色档案
-      </button>
-
-      <button
-        class="menu-button"
-        onclick="showSection('chapters', this)"
-      >
-        02 / 章节记录
-      </button>
-
-      <button
-        class="menu-button"
-        onclick="showSection('experiment', this)"
-      >
-        03 / 实验数据库
-      </button>
-
-    </aside>
-
-    <div class="database-content">
-
-      <button
-        class="close-button"
+        class="sound-button"
+        id="soundButton"
         type="button"
-        onclick="closeDatabase()"
-        aria-label="关闭"
+        onclick="toggleSound()"
       >
-        ×
+        SOUND OFF
       </button>
-
-      <div id="sectionContent"></div>
-
     </div>
 
   </section>
 
-  <script>
-    const contents = {
-      overview: `
-        <h2>PROJECT FILE</h2>
+  <footer class="bottom-info">
 
-        <p>
-          项目代号：COGNITIVE POLLUTION<br>
-          中文名称：认知污染<br>
-          当前状态：部分实验记录恢复中。<br><br>
+    <div>
+      PROJECT
+      <strong>COGNITIVE POLLUTION</strong>
+    </div>
 
-          当一个人的外貌、身份与存在痕迹，
-          可以同时从人类认知和电子记录中被改写，
-          那么人们所相信的“真实”，究竟还剩下多少？
-        </p>
+    <div>
+      STATUS
+      <strong>RECOVERING</strong>
+    </div>
 
-        <div class="file-card">
-          <small>SECURITY LEVEL // UNKNOWN</small>
-          <h3>认知改写实验</h3>
-          <p>
-            实验对象身份异常，死亡记录存在冲突。
-            部分档案已遭人为覆盖。
-          </p>
-        </div>
-      `,
+    <div>
+      RECORD
+      <strong>SUBJECT 01</strong>
+    </div>
 
-      characters: `
-        <h2>CHARACTER FILE</h2>
+  </footer>
 
-        <div class="file-card">
-          <small>SUBJECT NO. 001</small>
-          <h3>一号</h3>
-          <p>
-            认知改写能力持有者。
-            官方记录显示其已在最后一次实验中死亡。
-          </p>
-        </div>
+</main>
 
-        <div class="file-card">
-          <small>IDENTITY FILE</small>
-          <h3>空空</h3>
-          <p>
-            鸿凛科技公司总裁之女。
-            重返冕阳私立学院后，身份记录开始出现异常。
-          </p>
-        </div>
+<section class="database" id="database">
 
-        <div class="file-card">
-          <small>OBSERVATION FILE</small>
-          <h3>王晞</h3>
-          <p>
-            对认知改写表现出异常抗性，
-            是少数能够察觉违和之处的人。
-          </p>
-        </div>
-      `,
+  <button
+    class="close-button"
+    type="button"
+    onclick="exitSystem()"
+    aria-label="返回首页"
+  >
+    ×
+  </button>
 
-      chapters: `
-        <h2>CHAPTER SELECT</h2>
+  <aside class="sidebar">
 
-        <div class="file-card">
-          <small>CHAPTER 01</small>
-          <h3>错误的早餐</h3>
-          <p>
-            她记得空空从来不吃鸡蛋。
-          </p>
-        </div>
+    <div class="sidebar-logo">
+      认知污染
+    </div>
 
-        <div class="file-card">
-          <small>CHAPTER 02</small>
-          <h3>不存在的人</h3>
-          <p>
-            所有人都认识她，却没有人真正记得她。
-          </p>
-        </div>
+    <div class="sidebar-subtitle">
+      HONGLIN INTERNAL DATABASE<br>
+      ACCESS LEVEL：UNKNOWN
+    </div>
 
-        <div class="file-card">
-          <small>CHAPTER 03</small>
-          <h3>镜子里的自己</h3>
-          <p>
-            镜子没有说谎。说谎的是整个世界。
-          </p>
-        </div>
+    <button
+      class="nav-button active"
+      data-category="world"
+      onclick="selectCategory('world',this)"
+    >
+      01 / 世界观档案
+    </button>
 
-        <div class="file-card">
-          <small>CHAPTER 04</small>
-          <h3>最后一次实验</h3>
-          <p>
-            死亡确认完成。实验对象已被销毁。
-          </p>
-        </div>
-      `,
+    <button
+      class="nav-button"
+      data-category="characters"
+      onclick="selectCategory('characters',this)"
+    >
+      02 / 角色档案
+    </button>
 
-      experiment: `
-        <h2>EXPERIMENT LOG</h2>
+    <button
+      class="nav-button"
+      data-category="chapters"
+      onclick="selectCategory('chapters',this)"
+    >
+      03 / 章节档案
+    </button>
 
-        <p>
-          数据损坏率：67%<br>
-          生物识别信息：不一致<br>
-          监控记录：已被覆盖<br>
-          实验对象状态：无法确认
-        </p>
+    <button
+      class="nav-button"
+      data-category="relations"
+      onclick="selectCategory('relations',this)"
+    >
+      04 / 关系记录
+    </button>
 
-        <div class="file-card">
-          <small>WARNING</small>
-          <h3>不要相信你所记得的一切</h3>
-          <p>
-            认知污染可能已经发生。
-          </p>
+    <button
+      class="nav-button"
+      onclick="toggleSound()"
+    >
+      05 / 音频控制
+    </button>
+
+    <div class="sidebar-footer">
+      DATABASE CONNECTION<br>
+      STATUS：UNSTABLE
+    </div>
+
+  </aside>
+
+  <div class="database-main">
+
+    <nav class="file-list">
+      <div class="file-list-title" id="fileListTitle">
+        WORLD DATABASE
+      </div>
+
+      <div id="fileButtons"></div>
+    </nav>
+
+    <article class="article" id="article"></article>
+
+  </div>
+
+</section>
+
+<script>
+const databaseData = {
+  world: [
+    {
+      code: "WORLD FILE 00",
+      title: "世界观档案",
+      subtitle: "COGNITIVE POLLUTION PROJECT",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <p class="lead">
+              当所有人相信的现实，都可能被改变。
+              那么，真正的现实，还存在吗？
+            </p>
+
+            <h3>项目概述</h3>
+
+            <p>
+              在未来，随着认知科学、人工智能以及脑科学技术的发展，
+              人类逐渐发现：人的记忆、判断、身份认知，并不是绝对可靠的。
+            </p>
+
+            <p>
+              人类所认为的“真实”，实际上建立在无数认知信息的共同维系之上。
+              而当这些信息被污染，现实本身也会随之发生偏移。
+            </p>
+
+            <div class="quote-box">
+              所有人都认为是真的，那它就是真的。
+            </div>
+
+            <p>
+              认知污染可以改变别人眼中的你，
+              却无法改变你内心真正的自己。
+            </p>
+
+          </div>
         </div>
       `
-    };
+    },
 
-    const sectionContent =
-      document.getElementById("sectionContent");
+    {
+      code: "ANOMALY FILE 01",
+      title: "认知污染",
+      subtitle: "COGNITIVE ANOMALY",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
 
-    sectionContent.innerHTML = contents.overview;
+            <div class="data-grid">
+              <div class="data-item">
+                <span>异常名称</span>
+                <strong>认知污染</strong>
+              </div>
 
-    function openDatabase() {
-      document
-        .getElementById("database")
-        .classList.add("open");
+              <div class="data-item">
+                <span>异常类型</span>
+                <strong>认知系统影响现象</strong>
+              </div>
+
+              <div class="data-item">
+                <span>物质影响</span>
+                <strong>无</strong>
+              </div>
+
+              <div class="data-item">
+                <span>危险等级</span>
+                <strong>UNKNOWN</strong>
+              </div>
+            </div>
+
+            <p>
+              一种能够影响人类认知系统的异常现象。
+            </p>
+
+            <p>
+              它不会改变物质，不会改变过去，
+              也不会创造不存在的事实。
+            </p>
+
+            <p>
+              但它能够改变一个人对于
+              “某件事是否真实发生”的判断。
+            </p>
+
+            <h3>认知合理化</h3>
+
+            <p>
+              被污染后的认知，会自动寻找合理解释。
+            </p>
+
+            <p>
+              一个陌生人，可以变成熟悉的人。
+              一段不存在的经历，可以被认为真实存在。
+              一个错误的身份，可以被整个世界共同承认。
+            </p>
+
+            <div class="warning">
+              认知污染无法改变使用者内心真正的自我认知。
+            </div>
+
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "ABILITY FILE 02",
+      title: "认知覆盖",
+      subtitle: "COGNITIVE OVERWRITE",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <p>
+              认知覆盖是认知污染中的特殊能力表现。
+            </p>
+
+            <p>
+              使用者能够影响目标对于自身身份、
+              经历以及存在关系的判断。
+            </p>
+
+            <h3>覆盖案例</h3>
+
+            <div class="quote-box">
+              原始认知：<br>
+              “她不是空空。”<br><br>
+
+              覆盖完成：<br>
+              “她就是空空，只是我忘记了一些事情。”
+            </div>
+
+            <p>
+              认知覆盖并不会制造新的现实。
+              它只是让所有人的认知，
+              自动向一个合理答案靠近。
+            </p>
+
+            <div class="warning">
+              被所有人承认的身份，
+              并不一定属于真正的自己。
+            </div>
+
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "COMPANY FILE 03",
+      title: "鸿凛科技",
+      subtitle: "HONGLIN TECHNOLOGY",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>企业名称</span>
+                <strong>鸿凛科技</strong>
+              </div>
+
+              <div class="data-item">
+                <span>企业类型</span>
+                <strong>全球科技企业</strong>
+              </div>
+
+              <div class="data-item">
+                <span>公开研究</span>
+                <strong>人工智能 / 生命科学 / 认知研究</strong>
+              </div>
+
+              <div class="data-item">
+                <span>隐藏项目</span>
+                <strong>认知污染实验计划</strong>
+              </div>
+            </div>
+
+            <p>
+              鸿凛科技表面上致力于人工智能、
+              生命科学以及认知研究。
+            </p>
+
+            <p>
+              实际上，其旗下隐藏着秘密研究项目：
+              “认知污染实验计划”。
+            </p>
+
+            <h3>实验目标</h3>
+
+            <p>
+              突破人类身份认知限制，
+              探索意识、记忆与现实之间的边界。
+            </p>
+
+            <div class="quote-box">
+              如果人类对于身份的认知可以被修改，
+              那么“存在”本身也可以被重新定义。
+            </div>
+
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "PHILOSOPHY FILE 04",
+      title: "真实与谎言",
+      subtitle: "TRUTH AND FALSEHOOD",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <p class="lead">
+              《认知污染》的世界中，
+              没有简单的真假。
+            </p>
+
+            <div class="quote-box">
+              被所有人相信的谎言，可能成为现实。<br>
+              而无人相信的真实，也可能逐渐消失。
+            </div>
+
+            <p>
+              故事真正讨论的不是：
+              “谁是真正的空空。”
+            </p>
+
+            <p>
+              而是当全世界都忘记了你，
+              你是否还能证明，自己曾经存在。
+            </p>
+
+            <h3>核心主题</h3>
+
+            <p>
+              身份。记忆。存在。
+            </p>
+
+            <p>
+              以及一个人究竟需要多少人的认可，
+              才能确认自己是谁。
+            </p>
+
+            <div class="theme-box">
+              “当世界告诉你，你不是你。”<br>
+              “你还能不能相信自己。”
+            </div>
+
+          </div>
+        </div>
+      `
+    }
+  ],
+
+  characters: [
+    {
+      code: "SUBJECT FILE 01",
+      title: "实验体01",
+      subtitle: "IDENTITY UNKNOWN",
+      image: "character_01.png",
+      imageLabel: "SUBJECT 01 // STATUS：DEAD / UNKNOWN",
+      html: `
+        <div class="article-layout">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>姓名</span>
+                <strong>未知</strong>
+              </div>
+
+              <div class="data-item">
+                <span>编号</span>
+                <strong>实验体01</strong>
+              </div>
+
+              <div class="data-item">
+                <span>现身份</span>
+                <strong>冕阳私立学院学生</strong>
+              </div>
+
+              <div class="data-item">
+                <span>伪装身份</span>
+                <strong>空空</strong>
+              </div>
+
+              <div class="data-item">
+                <span>能力</span>
+                <strong>认知污染 / 认知覆盖</strong>
+              </div>
+
+              <div class="data-item">
+                <span>所属</span>
+                <strong>鸿凛科技认知污染实验计划</strong>
+              </div>
+            </div>
+
+            <h3>人物简介</h3>
+
+            <p>
+              她没有名字。从诞生开始，
+              她便只有一个编号——01。
+            </p>
+
+            <p>
+              这是她唯一被记录过的存在证明。
+            </p>
+
+            <p>
+              她可以让一个陌生人，
+              变成所有人记忆里的熟人。
+              也可以让一个错误的身份，
+              成为整个世界默认的事实。
+            </p>
+
+            <p>
+              实验事故后，所有资料显示：
+              实验体01死亡。
+            </p>
+
+            <p>
+              但几年后，一个少女重新出现在冕阳私立学院。
+              所有人都对她说：
+              “空空，欢迎回来。”
+            </p>
+
+            <div class="warning">
+              只有她知道，那个名字并不是她的。
+            </div>
+
+            <h3>性格档案</h3>
+
+            <p>
+              安静、敏感、克制、孤独、缺乏安全感，
+              同时又极度渴望认可。
+            </p>
+
+            <p>
+              她会模仿普通人的行为。
+              学习微笑，学习寒暄，
+              学习如何成为一个“正常的人”。
+            </p>
+
+            <p>
+              她想成为空空，
+              却又害怕自己永远只能成为空空。
+            </p>
+
+            <div class="theme-box">
+              “如果所有人都记得我，<br>
+              那我是不是就真的存在？”
+            </div>
+
+          </div>
+
+          <div class="character-image-box">
+            <img
+              class="character-image"
+              src="character_01.png"
+              alt="实验体01"
+            >
+            <div class="image-label">
+              SUBJECT 01 // STATUS：DEAD / UNKNOWN
+            </div>
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "IDENTITY FILE 02",
+      title: "空空",
+      subtitle: "TRUE IDENTITY HOLDER",
+      image: "character_kongkong.png",
+      imageLabel: "IDENTITY HOLDER // STATUS：MISSING",
+      html: `
+        <div class="article-layout">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>姓名</span>
+                <strong>空空</strong>
+              </div>
+
+              <div class="data-item">
+                <span>身份</span>
+                <strong>鸿凛科技董事长独女</strong>
+              </div>
+
+              <div class="data-item">
+                <span>所属</span>
+                <strong>冕阳私立学院</strong>
+              </div>
+
+              <div class="data-item">
+                <span>身份状态</span>
+                <strong>真实身份持有者</strong>
+              </div>
+
+              <div class="data-item">
+                <span>关系</span>
+                <strong>实验体01冒用身份的对象</strong>
+              </div>
+
+              <div class="data-item">
+                <span>家庭背景</span>
+                <strong>鸿凛科技继承人</strong>
+              </div>
+            </div>
+
+            <h3>人物简介</h3>
+
+            <p>
+              她拥有别人渴望的一切。
+              完整的成长经历、被保护的身份，
+              以及被所有人认可的名字。
+            </p>
+
+            <p>
+              她从未怀疑过自己是谁，
+              直到她发现整个世界正在接受另一个“自己”。
+            </p>
+
+            <p>
+              新闻里的她、学校里的她、
+              所有人口中的她，都不是她本人。
+            </p>
+
+            <div class="warning">
+              她失去的不是一个名字，
+              而是证明自己存在的权利。
+            </div>
+
+            <h3>性格档案</h3>
+
+            <p>
+              冷静、理性、克制、敏锐、骄傲，也温柔。
+            </p>
+
+            <p>
+              她习惯承担别人期待中的自己，
+              也比任何人都清楚身份的重要性。
+            </p>
+
+            <p>
+              面对实验体01，她愤怒，
+              却无法忽视那个偷走自己人生的人，
+              同样也是一个被制造出来的受害者。
+            </p>
+
+            <div class="theme-box">
+              “如果名字可以被夺走，<br>
+              那真正属于我的东西是什么？”
+            </div>
+
+          </div>
+
+          <div class="character-image-box">
+            <img
+              class="character-image"
+              src="character_kongkong.png"
+              alt="空空"
+            >
+            <div class="image-label">
+              IDENTITY HOLDER // STATUS：MISSING
+            </div>
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "OBSERVER FILE 03",
+      title: "王晞",
+      subtitle: "COGNITIVE ANOMALY OBSERVER",
+      image: "character_wangxi.png",
+      imageLabel: "OBSERVER // RESISTANCE：ABNORMAL",
+      html: `
+        <div class="article-layout">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>姓名</span>
+                <strong>王晞</strong>
+              </div>
+
+              <div class="data-item">
+                <span>身份</span>
+                <strong>学生 / 民间侦探少女</strong>
+              </div>
+
+              <div class="data-item">
+                <span>所属</span>
+                <strong>冕阳私立学院</strong>
+              </div>
+
+              <div class="data-item">
+                <span>特殊状态</span>
+                <strong>认知异常耐受者</strong>
+              </div>
+
+              <div class="data-item">
+                <span>主动抵抗</span>
+                <strong>无法主动抵抗</strong>
+              </div>
+
+              <div class="data-item">
+                <span>异常表现</span>
+                <strong>能够感知认知与现实的不协调</strong>
+              </div>
+            </div>
+
+            <h3>人物简介</h3>
+
+            <p>
+              她不是第一个知道真相的人。
+              一开始，她甚至根本不知道发生了什么。
+            </p>
+
+            <p>
+              她只是觉得，哪里不对。
+            </p>
+
+            <p>
+              一句话、一个动作、一个习惯。
+              所有人认为正常的事情，
+              在她眼中却存在无法解释的违和感。
+            </p>
+
+            <p>
+              她的大脑无法理解异常，
+              但她的身体比大脑更早察觉到了冲突。
+            </p>
+
+            <p>
+              头痛、不适、短暂的失衡，
+              都是她与错误现实之间产生的冲突。
+            </p>
+
+            <h3>性格档案</h3>
+
+            <p>
+              直率、活泼、聪明、敏锐、乐观、执着。
+            </p>
+
+            <p>
+              她拥有极强的求真欲。
+              即使答案令人痛苦，
+              即使真相会破坏平静，
+              她也不会选择相信一个舒服的谎言。
+            </p>
+
+            <div class="theme-box">
+              “如果所有人都相信错误，<br>
+              那么坚持正确的人，<br>
+              是不是才是最孤独的人？”
+            </div>
+
+          </div>
+
+          <div class="character-image-box">
+            <img
+              class="character-image"
+              src="character_wangxi.png"
+              alt="王晞"
+            >
+            <div class="image-label">
+              OBSERVER // RESISTANCE：ABNORMAL
+            </div>
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code: "DIRECTOR FILE 04",
+      title: "董事长",
+      subtitle: "PROJECT DIRECTOR",
+      image: "character_director.png",
+      imageLabel: "PROJECT DIRECTOR // ACCESS：LEVEL S",
+      html: `
+        <div class="article-layout">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>姓名</span>
+                <strong>未知</strong>
+              </div>
+
+              <div class="data-item">
+                <span>身份</span>
+                <strong>鸿凛科技董事长</strong>
+              </div>
+
+              <div class="data-item">
+                <span>职位</span>
+                <strong>鸿凛科技最高负责人</strong>
+              </div>
+
+              <div class="data-item">
+                <span>关系</span>
+                <strong>空空的父亲</strong>
+              </div>
+
+              <div class="data-item">
+                <span>项目身份</span>
+                <strong>认知污染实验计划负责人之一</strong>
+              </div>
+
+              <div class="data-item">
+                <span>特殊能力</span>
+                <strong>无</strong>
+              </div>
+            </div>
+
+            <h3>人物简介</h3>
+
+            <p>
+              他创造了一个能够改变认知的实验，
+              也创造了一个无法被世界承认的人。
+            </p>
+
+            <p>
+              对于外界，他是一位成功的企业家。
+              理性、温和、富有远见。
+            </p>
+
+            <p>
+              但在实验室里，他只关注结果。
+            </p>
+
+            <div class="quote-box">
+              实验体不是孩子，不是生命，
+              而是一组数据。
+            </div>
+
+            <h3>性格档案</h3>
+
+            <p>
+              理性、冷静、控制欲、完美主义、
+              温和，同时也冷酷。
+            </p>
+
+            <p>
+              他坚信为了推动人类进步，
+              必须有人承担代价。
+            </p>
+
+            <p>
+              他深爱自己的女儿，
+              却制造出了另一个无法拥有人生的女孩。
+            </p>
+
+            <div class="theme-box">
+              “如果牺牲一个人，<br>
+              能够改变整个世界，<br>
+              那么这个选择是否正确？”
+            </div>
+
+          </div>
+
+          <div class="character-image-box">
+            <img
+              class="character-image"
+              src="character_director.png"
+              alt="董事长"
+            >
+            <div class="image-label">
+              PROJECT DIRECTOR // ACCESS：LEVEL S
+            </div>
+          </div>
+        </div>
+      `
+    }
+  ],
+
+  chapters: [
+    {
+      code: "CHAPTER 01",
+      title: "欢迎回来，空空",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“所有人都说她回来了。”<br>“可是，真正的她，正在黑暗里看着这一切。”",
+        `
+          <p>
+            实验体01在一次实验事故后，被确认死亡。
+            所有实验记录显示：实验体01已不存在。
+          </p>
+
+          <p>
+            几年后，一名少女重新出现在冕阳私立学院。
+            她拥有熟悉的名字、熟悉的身份、熟悉的一切。
+          </p>
+
+          <p>
+            新闻报道她回归，学校欢迎她回来。
+            所有人都相信：她就是空空。
+          </p>
+
+          <p>
+            但没有人知道，站在阳光下、
+            被所有人簇拥的少女，
+            并不是那个真正被等待的人。
+          </p>
+
+          <p>
+            城市另一端，真正的空空被困在黑暗之中。
+            她只能看着电视里的“自己”，
+            重新拥有她的人生。
+          </p>
+        `,
+        "如果所有人都相信一个谎言，那么真相还有意义吗？"
+      )
+    },
+
+    {
+      code: "CHAPTER 02",
+      title: "借来的名字",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“我只是借用一下。”<br>“为什么最后，连我自己都快相信了？”",
+        `
+          <p>
+            成为空空之后，实验体01第一次拥有了普通人的生活。
+          </p>
+
+          <p>
+            校园、朋友、问候、笑容。
+            那些曾经距离她无比遥远的东西，
+            突然全部出现在她身边。
+          </p>
+
+          <p>
+            她学习如何回应别人，
+            学习什么时候应该微笑，
+            学习如何成为一个“正常的人”。
+          </p>
+
+          <p>
+            她穿上空空的校服，使用空空的名字，
+            接受属于空空的人生。
+          </p>
+
+          <p>
+            可是越靠近那个身份，她越清楚：
+            这个名字并不属于她。
+          </p>
+
+          <p>
+            她拥有了一切，却依然没有拥有自己。
+          </p>
+        `,
+        "借来的身份，终究无法填补空白的自己。"
+      )
+    },
+
+    {
+      code: "CHAPTER 03",
+      title: "鸡蛋的证明",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“空空从来不吃鸡蛋。”",
+        `
+          <p>
+            一句无意的话，成为第一个裂缝。
+          </p>
+
+          <p>
+            平静的校园生活中，
+            一个微不足道的细节，
+            让隐藏的身份出现了破绽。
+          </p>
+
+          <p>
+            一颗鸡蛋、一个习惯、
+            一段不属于空空的记忆。
+          </p>
+
+          <p>
+            实验体01第一次发现，
+            不是所有东西都可以被认知覆盖。
+          </p>
+
+          <p>
+            在人群之外，一个少女开始注意到：
+            这个“空空”和自己认识的空空，
+            存在某种无法解释的区别。
+          </p>
+
+          <p>
+            她叫王晞。
+          </p>
+
+          <p>
+            她不知道真相，也不知道发生了什么。
+            但她知道：这里有问题。
+          </p>
+        `,
+        "谎言最害怕的，从来不是质疑，而是不经意的小事。"
+      )
+    },
+
+    {
+      code: "CHAPTER 04",
+      title: "无法被修改的人",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“你记错了。”",
+        `
+          <p>
+            一句简单的话，让所有人的认知恢复正常。
+            除了一个人。
+          </p>
+
+          <p>
+            王晞第一次感受到异常。
+          </p>
+
+          <p>
+            她不知道认知污染的存在，
+            不知道实验体01的能力，
+            也不知道真正发生了什么。
+          </p>
+
+          <p>
+            她只是感觉，眼前的一切
+            和自己的记忆产生了冲突。
+          </p>
+
+          <p>
+            别人会接受，别人会遗忘，
+            别人会认为那才是真实。
+          </p>
+
+          <p>
+            但她不会。
+          </p>
+
+          <p>
+            她的身体开始承受异常带来的痛苦：
+            头痛、不适、短暂的失衡。
+          </p>
+
+          <p>
+            她不是知道真相的人，
+            她只是第一个发现现实有裂缝的人。
+          </p>
+        `,
+        "当世界开始说谎，第一个痛苦的人，往往是真正看见的人。"
+      )
+    },
+
+    {
+      code: "CHAPTER 05",
+      title: "实验体01",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“奖励发放。”",
+        `
+          <p>
+            对于别人来说，那只是一颗普通的鸡蛋。
+          </p>
+
+          <p>
+            对于实验体01来说，
+            那是她第一次得到的温柔。
+          </p>
+
+          <p>
+            没有命令，没有测试，没有编号。
+            只是一个简单的奖励。
+          </p>
+
+          <p>
+            白色实验室、冰冷机器、
+            没有名字的少女。
+          </p>
+
+          <p>
+            她曾经以为，只要完成实验，
+            就能获得一点点属于自己的东西。
+          </p>
+
+          <p>
+            直到她看见了空空。
+          </p>
+
+          <p>
+            那个被保护的人、拥有名字的人、
+            所有人都会小心对待的人。
+          </p>
+
+          <p>
+            她第一次明白，
+            原来世界上真的存在“被选择的人”。
+          </p>
+
+          <p>
+            而自己，只是实验记录里的一个编号。
+          </p>
+        `,
+        "一个人最大的渴望，有时候只是被当作一个人。"
+      )
+    },
+
+    {
+      code: "CHAPTER 06",
+      title: "镜中的另一个人",
+      subtitle: "VOLUME ONE",
+      html: chapterHtml(
+        "“为什么……”<br>“她还记得？”",
+        `
+          <p>
+            实验体01第一次产生恐惧。
+          </p>
+
+          <p>
+            不是害怕身份暴露，
+            而是害怕自己的能力出现了无法解释的例外。
+          </p>
+
+          <p>
+            镜子前，她看见自己的脸，
+            也看见了另一个答案。
+          </p>
+
+          <p>
+            所有人都认为她是空空，
+            只有镜子提醒她：她不是。
+          </p>
+
+          <p>
+            王晞的存在，成为她无法理解的漏洞。
+          </p>
+
+          <p>
+            她第一次意识到，
+            这个世界并不是完全属于她控制的。
+          </p>
+
+          <p>
+            如果连自己都无法确认自己是谁，
+            那么她还能依靠什么存在？
+          </p>
+        `,
+        "镜子不会说谎。但它也不会告诉你，你是谁。"
+      )
+    },
+
+    {
+      code: "VOLUME SUMMARY",
+      title: "第一卷总结",
+      subtitle: "RECOVERED RECORD",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <div class="data-grid">
+              <div class="data-item">
+                <span>第一章</span>
+                <strong>身份出现，实验体01成为空空。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>第二章</span>
+                <strong>她开始体验属于别人的人生。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>第三章</span>
+                <strong>一个微小的习惯暴露身份裂缝。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>第四章</span>
+                <strong>王晞成为无法被完全影响的人。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>第五章</span>
+                <strong>过去的实验记录揭开1号的伤痕。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>第六章</span>
+                <strong>1号开始怀疑自己究竟是谁。</strong>
+              </div>
+            </div>
+
+            <div class="quote-box">
+              一个没有名字的人，偷走了别人的名字。<br><br>
+
+              一个拥有名字的人，失去了证明自己的机会。<br><br>
+
+              而一个无法接受错误的人，
+              开始寻找真正的答案。
+            </div>
+
+          </div>
+        </div>
+      `
+    }
+  ],
+
+  relations: [
+    {
+      code: "RELATION FILE 01",
+      title: "核心关系",
+      subtitle: "RELATION SUMMARY",
+      html: `
+        <div class="article-layout no-image">
+          <div class="article-text">
+
+            <div class="data-grid">
+
+              <div class="data-item">
+                <span>实验体01</span>
+                <strong>想成为一个人。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>空空</span>
+                <strong>想夺回自己的人生。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>王晞</span>
+                <strong>想找到真正的答案。</strong>
+              </div>
+
+              <div class="data-item">
+                <span>董事长</span>
+                <strong>想证明自己的选择正确。</strong>
+              </div>
+
+            </div>
+
+            <h3>核心矛盾</h3>
+
+            <p>
+              四个人共同组成《认知污染》的核心矛盾：
+            </p>
+
+            <p class="lead">
+              身份。真实。记忆。
+            </p>
+
+            <div class="theme-box">
+              一个人究竟需要多少人的认可，<br>
+              才能证明自己存在。
+            </div>
+
+          </div>
+        </div>
+      `
+    }
+  ]
+};
+
+function chapterHtml(opening, body, theme){
+  return `
+    <div class="article-layout no-image">
+      <div class="article-text">
+
+        <div class="quote-box">
+          ${opening}
+        </div>
+
+        ${body}
+
+        <h3>本章主题</h3>
+
+        <div class="theme-box">
+          ${theme}
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+const categoryNames = {
+  world: "WORLD DATABASE",
+  characters: "CHARACTER DATABASE",
+  chapters: "CHAPTER ARCHIVE",
+  relations: "RELATION DATABASE"
+};
+
+let currentCategory = "world";
+let soundOn = false;
+
+const bgm = document.getElementById("bgm");
+bgm.volume = 0.32;
+
+function runBoot(){
+  const progress = document.getElementById("bootProgress");
+  const number = document.getElementById("bootNumber");
+  const text = document.getElementById("bootText");
+
+  let value = 0;
+
+  const timer = setInterval(() => {
+    value += Math.floor(Math.random() * 9) + 2;
+
+    if(value >= 100){
+      value = 100;
+      clearInterval(timer);
+
+      text.textContent = "DATABASE CONNECTED";
+
+      setTimeout(() => {
+        document.getElementById("boot").classList.add("hide");
+      },450);
     }
 
-    function closeDatabase() {
-      document
-        .getElementById("database")
-        .classList.remove("open");
+    progress.style.width = value + "%";
+    number.textContent = value + "%";
+
+    if(value > 30){
+      text.textContent = "RECOVERING MEMORY...";
     }
 
-    function showSection(name, button) {
-      sectionContent.innerHTML = contents[name];
-
-      document
-        .querySelectorAll(".menu-button")
-        .forEach(item => item.classList.remove("active"));
-
-      button.classList.add("active");
+    if(value > 70){
+      text.textContent = "VERIFYING IDENTITY...";
     }
+  },65);
+}
 
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") {
-        closeDatabase();
-      }
+function enterSystem(){
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("database").classList.add("open");
+
+  selectCategory("world",document.querySelector('[data-category="world"]'));
+
+  if(!soundOn){
+    startSound();
+  }
+}
+
+function exitSystem(){
+  document.getElementById("database").classList.remove("open");
+  document.getElementById("home").classList.remove("hidden");
+}
+
+function startSound(){
+  bgm.play()
+    .then(() => {
+      soundOn = true;
+      updateSoundButtons();
+    })
+    .catch(() => {
+      soundOn = false;
+      updateSoundButtons();
     });
-  </script>
+}
+
+function toggleSound(){
+  if(soundOn){
+    bgm.pause();
+    soundOn = false;
+  }else{
+    startSound();
+  }
+
+  updateSoundButtons();
+}
+
+function updateSoundButtons(){
+  const homeButton = document.getElementById("soundButton");
+
+  if(homeButton){
+    homeButton.textContent = soundOn ? "SOUND ON" : "SOUND OFF";
+  }
+}
+
+function selectCategory(category,button){
+  currentCategory = category;
+
+  document.querySelectorAll(".nav-button[data-category]")
+    .forEach(item => item.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  document.getElementById("fileListTitle").textContent =
+    categoryNames[category];
+
+  renderFileButtons(category);
+  showFile(category,0);
+}
+
+function renderFileButtons(category){
+  const container = document.getElementById("fileButtons");
+  const files = databaseData[category];
+
+  container.innerHTML = files.map((file,index) => `
+    <button
+      class="file-button ${index === 0 ? "active" : ""}"
+      onclick="showFile('${category}',${index},this)"
+    >
+      <small>${file.code}</small>
+      ${file.title}
+    </button>
+  `).join("");
+}
+
+function showFile(category,index,button){
+  const file = databaseData[category][index];
+  const article = document.getElementById("article");
+
+  document.querySelectorAll(".file-button")
+    .forEach(item => item.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }else{
+    const first = document.querySelector(".file-button");
+    if(first){
+      first.classList.add("active");
+    }
+  }
+
+  article.classList.remove("flash");
+  void article.offsetWidth;
+  article.classList.add("flash");
+
+  article.innerHTML = `
+    <div class="article-code">${file.code}</div>
+    <h2 class="article-title">${file.title}</h2>
+    <div class="article-subtitle">${file.subtitle}</div>
+    ${file.html}
+  `;
+
+  article.scrollTop = 0;
+}
+
+document.addEventListener("keydown",event => {
+  if(event.key === "Escape"){
+    exitSystem();
+  }
+});
+
+window.addEventListener("load",runBoot);
+</script>
 
 </body>
 </html>
