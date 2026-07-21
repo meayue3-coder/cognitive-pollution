@@ -8,11 +8,12 @@
 <style>
 :root{
   --red:#a51f3c;
-  --bright:#e44763;
-  --white:#f4f4f6;
-  --gray:#a1a3ad;
-  --dark:#030409;
-  --panel:rgba(5,6,12,.88);
+  --bright:#ef4566;
+  --white:#f2f3f6;
+  --gray:#a0a2ab;
+  --dark:#020309;
+  --line:rgba(255,255,255,.11);
+  --panel:rgba(5,6,13,.9);
 }
 
 *{
@@ -31,14 +32,26 @@ body{
   overflow:hidden;
   background:var(--dark);
   color:var(--white);
-  font-family:"Microsoft YaHei","Noto Sans SC",Arial,sans-serif;
+  font-family:
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    Arial,
+    sans-serif;
 }
 
 button{
   font:inherit;
 }
 
-/* 启动画面 */
+button,
+img{
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* =========================================
+   开场加载界面
+========================================= */
+
 #boot{
   position:fixed;
   inset:0;
@@ -47,12 +60,15 @@ button{
   align-items:center;
   justify-content:center;
   background:#020308;
-  transition:opacity .7s,visibility .7s;
+  transition:
+    opacity .7s ease,
+    visibility .7s ease;
 }
 
 #boot.hide{
   opacity:0;
   visibility:hidden;
+  pointer-events:none;
 }
 
 .boot-box{
@@ -60,19 +76,20 @@ button{
 }
 
 .boot-code{
-  margin-bottom:22px;
-  color:rgba(255,255,255,.48);
-  font-size:11px;
-  letter-spacing:.35em;
+  margin-bottom:20px;
+  color:rgba(255,255,255,.42);
+  font-size:10px;
+  letter-spacing:.34em;
 }
 
 .boot-title{
-  margin-bottom:26px;
+  margin-bottom:25px;
   font-size:clamp(22px,4vw,42px);
-  letter-spacing:.28em;
+  letter-spacing:.25em;
+  font-weight:500;
 }
 
-.boot-line{
+.boot-track{
   width:100%;
   height:2px;
   overflow:hidden;
@@ -86,22 +103,26 @@ button{
   box-shadow:0 0 18px var(--bright);
 }
 
-.boot-bottom{
+.boot-info{
   display:flex;
   justify-content:space-between;
   margin-top:13px;
-  color:rgba(255,255,255,.5);
-  font-size:10px;
-  letter-spacing:.2em;
+  color:rgba(255,255,255,.44);
+  font-size:9px;
+  letter-spacing:.18em;
 }
 
-/* 首页背景 */
+/* =========================================
+   首页背景
+========================================= */
+
 .hero-image{
   position:fixed;
   inset:0;
   z-index:0;
   width:100%;
   height:100%;
+  display:block;
   object-fit:cover;
   object-position:center;
   pointer-events:none;
@@ -112,9 +133,10 @@ button{
 @keyframes heroIn{
   from{
     opacity:0;
-    transform:scale(1.04);
+    transform:scale(1.035);
     filter:brightness(.4);
   }
+
   to{
     opacity:1;
     transform:scale(1);
@@ -131,15 +153,16 @@ button{
     linear-gradient(
       90deg,
       rgba(2,3,8,.97) 0%,
-      rgba(2,3,8,.84) 24%,
-      rgba(2,3,8,.36) 55%,
-      rgba(2,3,8,.16) 76%,
-      rgba(2,3,8,.42) 100%
+      rgba(2,3,8,.86) 24%,
+      rgba(2,3,8,.38) 55%,
+      rgba(2,3,8,.15) 76%,
+      rgba(2,3,8,.4) 100%
     ),
     linear-gradient(
       0deg,
-      rgba(0,0,0,.78),
-      transparent 50%
+      rgba(0,0,0,.8) 0%,
+      transparent 52%,
+      rgba(0,0,0,.3) 100%
     );
 }
 
@@ -148,15 +171,16 @@ button{
   inset:0;
   z-index:2;
   pointer-events:none;
-  box-shadow:inset 0 0 190px 45px rgba(0,0,0,.9);
+  box-shadow:
+    inset 0 0 190px 45px rgba(0,0,0,.9);
 }
 
 .scanlines{
   position:fixed;
   inset:0;
-  z-index:30;
-  pointer-events:none;
+  z-index:35;
   opacity:.2;
+  pointer-events:none;
   background:repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -169,22 +193,40 @@ button{
   position:fixed;
   inset:-50%;
   z-index:3;
-  pointer-events:none;
   opacity:.035;
-  background-image:radial-gradient(#fff .6px,transparent .6px);
+  pointer-events:none;
+  background-image:
+    radial-gradient(#fff .6px,transparent .6px);
   background-size:5px 5px;
   animation:noiseMove .25s steps(2) infinite;
 }
 
 @keyframes noiseMove{
-  0%{transform:translate(0,0)}
-  25%{transform:translate(1%,-1%)}
-  50%{transform:translate(-1%,1%)}
-  75%{transform:translate(1%,1%)}
-  100%{transform:translate(0,0)}
+  0%{
+    transform:translate(0,0);
+  }
+
+  25%{
+    transform:translate(1%,-1%);
+  }
+
+  50%{
+    transform:translate(-1%,1%);
+  }
+
+  75%{
+    transform:translate(1%,1%);
+  }
+
+  100%{
+    transform:translate(0,0);
+  }
 }
 
-/* 首页 */
+/* =========================================
+   首页
+========================================= */
+
 .home{
   position:relative;
   z-index:5;
@@ -194,7 +236,9 @@ button{
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  transition:opacity .45s,visibility .45s;
+  transition:
+    opacity .45s ease,
+    visibility .45s ease;
 }
 
 .home.hidden{
@@ -219,9 +263,9 @@ button{
   display:flex;
   align-items:center;
   gap:10px;
-  color:rgba(255,255,255,.55);
-  font-size:10px;
-  letter-spacing:.22em;
+  color:rgba(255,255,255,.54);
+  font-size:9px;
+  letter-spacing:.23em;
 }
 
 .status-dot{
@@ -234,22 +278,31 @@ button{
 }
 
 @keyframes pulse{
-  0%,100%{opacity:.35;transform:scale(.8)}
-  50%{opacity:1;transform:scale(1.2)}
+  0%,
+  100%{
+    opacity:.35;
+    transform:scale(.8);
+  }
+
+  50%{
+    opacity:1;
+    transform:scale(1.2);
+  }
 }
 
 .home-content{
   width:min(760px,86vw);
   margin-top:auto;
   margin-bottom:7vh;
-  animation:fadeUp 1.2s .4s both;
+  animation:fadeUp 1.2s .35s both;
 }
 
 @keyframes fadeUp{
   from{
     opacity:0;
-    transform:translateY(24px);
+    transform:translateY(22px);
   }
+
   to{
     opacity:1;
     transform:translateY(0);
@@ -288,11 +341,28 @@ button{
 }
 
 @keyframes titleGlitch{
-  0%,87%,92%,100%{transform:none}
-  88%{transform:translate(4px,-1px)}
-  89%{transform:translate(-5px,1px)}
-  90%{transform:translate(2px,0)}
-  91%{transform:translate(-1px,0)}
+  0%,
+  87%,
+  92%,
+  100%{
+    transform:none;
+  }
+
+  88%{
+    transform:translate(4px,-1px);
+  }
+
+  89%{
+    transform:translate(-5px,1px);
+  }
+
+  90%{
+    transform:translate(2px,0);
+  }
+
+  91%{
+    transform:translate(-1px,0);
+  }
 }
 
 .home-quote{
@@ -309,6 +379,7 @@ button{
 .home-actions{
   display:flex;
   align-items:center;
+  flex-wrap:wrap;
   gap:14px;
   margin-top:38px;
 }
@@ -330,8 +401,8 @@ button{
 
 .sound-button{
   width:160px;
-  color:rgba(255,255,255,.75);
-  border-color:rgba(255,255,255,.25);
+  color:rgba(255,255,255,.72);
+  border-color:rgba(255,255,255,.24);
 }
 
 .primary-button:hover,
@@ -349,8 +420,8 @@ button{
 }
 
 .bottom-info div{
-  color:rgba(255,255,255,.45);
-  font-size:10px;
+  color:rgba(255,255,255,.43);
+  font-size:9px;
   letter-spacing:.2em;
 }
 
@@ -358,11 +429,14 @@ button{
   display:block;
   margin-top:7px;
   color:rgba(255,255,255,.88);
-  font-size:12px;
+  font-size:11px;
   font-weight:400;
 }
 
-/* 数据库 */
+/* =========================================
+   数据库整体界面
+========================================= */
+
 .database{
   position:fixed;
   inset:0;
@@ -371,9 +445,11 @@ button{
   grid-template-columns:270px minmax(0,1fr);
   visibility:hidden;
   opacity:0;
-  background:rgba(2,3,8,.94);
-  backdrop-filter:blur(16px);
-  transition:opacity .45s,visibility .45s;
+  background:rgba(2,3,8,.96);
+  backdrop-filter:blur(15px);
+  transition:
+    opacity .45s ease,
+    visibility .45s ease;
 }
 
 .database.open{
@@ -385,7 +461,7 @@ button{
   position:relative;
   padding:6vh 25px 4vh 3vw;
   overflow:auto;
-  border-right:1px solid rgba(255,255,255,.12);
+  border-right:1px solid var(--line);
   background:rgba(0,0,0,.18);
 }
 
@@ -397,10 +473,10 @@ button{
 
 .sidebar-subtitle{
   margin-bottom:38px;
-  color:rgba(255,255,255,.38);
+  color:rgba(255,255,255,.34);
   font-size:9px;
   line-height:1.8;
-  letter-spacing:.25em;
+  letter-spacing:.23em;
 }
 
 .nav-button{
@@ -410,10 +486,10 @@ button{
   border:0;
   border-left:2px solid transparent;
   background:transparent;
-  color:rgba(255,255,255,.52);
+  color:rgba(255,255,255,.5);
   text-align:left;
   cursor:pointer;
-  letter-spacing:.16em;
+  letter-spacing:.15em;
   transition:.22s;
 }
 
@@ -433,10 +509,10 @@ button{
   position:absolute;
   left:3vw;
   bottom:4vh;
-  color:rgba(255,255,255,.27);
-  font-size:9px;
+  color:rgba(255,255,255,.25);
+  font-size:8px;
   line-height:1.8;
-  letter-spacing:.18em;
+  letter-spacing:.17em;
 }
 
 .database-main{
@@ -450,12 +526,12 @@ button{
 .file-list{
   padding:7vh 18px 4vh;
   overflow:auto;
-  border-right:1px solid rgba(255,255,255,.1);
+  border-right:1px solid rgba(255,255,255,.09);
 }
 
 .file-list-title{
   margin-bottom:22px;
-  color:rgba(255,255,255,.35);
+  color:rgba(255,255,255,.32);
   font-size:9px;
   letter-spacing:.27em;
 }
@@ -464,9 +540,9 @@ button{
   width:100%;
   margin-bottom:9px;
   padding:15px 13px;
-  border:1px solid rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.08);
   background:rgba(255,255,255,.018);
-  color:rgba(255,255,255,.54);
+  color:rgba(255,255,255,.52);
   text-align:left;
   cursor:pointer;
   line-height:1.6;
@@ -476,7 +552,7 @@ button{
 .file-button small{
   display:block;
   margin-bottom:4px;
-  color:rgba(255,255,255,.28);
+  color:rgba(255,255,255,.26);
   font-size:8px;
   letter-spacing:.18em;
 }
@@ -490,19 +566,19 @@ button{
 
 .article{
   position:relative;
-  padding:7vh 6vw 8vh;
+  padding:6vh 5vw 8vh;
   overflow:auto;
 }
 
 .close-button{
   position:fixed;
-  top:3vh;
-  right:3vw;
+  top:3px;
+  right:30px;
   z-index:28;
-  width:48px;
-  height:48px;
+  width:49px;
+  height:49px;
   border:1px solid rgba(255,255,255,.2);
-  background:rgba(3,4,9,.65);
+  background:rgba(3,4,9,.72);
   color:#fff;
   cursor:pointer;
   font-size:22px;
@@ -516,37 +592,49 @@ button{
 .article-code{
   margin-bottom:14px;
   color:var(--bright);
-  font-size:10px;
+  font-size:9px;
   letter-spacing:.3em;
 }
 
 .article-title{
-  margin-bottom:9px;
-  font-size:clamp(32px,4.5vw,68px);
-  letter-spacing:.12em;
+  margin-bottom:10px;
+  font-size:clamp(34px,4.5vw,68px);
+  letter-spacing:.11em;
   font-weight:500;
 }
 
 .article-subtitle{
-  margin-bottom:40px;
-  color:rgba(255,255,255,.42);
-  font-size:11px;
+  margin-bottom:38px;
+  color:rgba(255,255,255,.4);
+  font-size:10px;
   letter-spacing:.22em;
 }
 
+/* =========================================
+   档案正文
+========================================= */
+
 .article-layout{
+  width:100%;
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(240px,38%);
-  gap:50px;
+  grid-template-columns:minmax(0,1fr);
+  gap:45px;
   align-items:start;
 }
 
-.article-layout.no-image{
-  grid-template-columns:minmax(0,850px);
+/*
+  角色页面：
+  左边档案文字，右边16:9角色档案卡
+*/
+.article-layout.with-character{
+  grid-template-columns:
+    minmax(470px,1fr)
+    minmax(400px,46%);
 }
 
 .article-text{
-  max-width:850px;
+  width:100%;
+  max-width:900px;
 }
 
 .article-text h3{
@@ -555,21 +643,21 @@ button{
   border-left:2px solid var(--red);
   font-size:17px;
   font-weight:500;
-  letter-spacing:.13em;
+  letter-spacing:.12em;
 }
 
 .article-text p{
   margin-bottom:18px;
-  color:rgba(255,255,255,.7);
+  color:rgba(255,255,255,.69);
   font-size:14px;
   line-height:2.05;
-  letter-spacing:.065em;
+  letter-spacing:.055em;
 }
 
 .article-text .lead{
   color:rgba(255,255,255,.94);
   font-size:clamp(18px,2vw,27px);
-  line-height:1.8;
+  line-height:1.85;
 }
 
 .quote-box{
@@ -581,7 +669,7 @@ button{
   color:rgba(255,255,255,.9);
   font-size:16px;
   line-height:2;
-  letter-spacing:.09em;
+  letter-spacing:.08em;
 }
 
 .data-grid{
@@ -592,6 +680,7 @@ button{
 }
 
 .data-item{
+  min-height:72px;
   padding:14px;
   border:1px solid rgba(255,255,255,.09);
   background:rgba(255,255,255,.018);
@@ -600,9 +689,9 @@ button{
 .data-item span{
   display:block;
   margin-bottom:7px;
-  color:rgba(255,255,255,.32);
+  color:rgba(255,255,255,.3);
   font-size:9px;
-  letter-spacing:.18em;
+  letter-spacing:.16em;
 }
 
 .data-item strong{
@@ -616,54 +705,15 @@ button{
   margin:30px 0;
   padding:18px 20px;
   border:1px solid rgba(215,43,75,.42);
-  background:rgba(145,18,42,.12);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(145,18,42,.2),
+      rgba(145,18,42,.07)
+    );
   color:#efa4b2;
   line-height:1.9;
   letter-spacing:.08em;
-}
-
-.character-image-box{
-  position:sticky;
-  top:7vh;
-  min-height:550px;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.1);
-  background:
-    linear-gradient(0deg,rgba(0,0,0,.7),transparent 55%),
-    radial-gradient(circle at 50% 35%,rgba(147,24,53,.15),transparent 55%);
-}
-
-.character-image-box::before{
-  content:"IDENTITY SCAN";
-  position:absolute;
-  top:16px;
-  left:16px;
-  color:rgba(255,255,255,.27);
-  font-size:9px;
-  letter-spacing:.25em;
-}
-
-.character-image{
-  width:100%;
-  max-height:76vh;
-  object-fit:contain;
-  object-position:center bottom;
-  filter:drop-shadow(0 12px 25px rgba(0,0,0,.75));
-}
-
-.image-label{
-  position:absolute;
-  left:18px;
-  right:18px;
-  bottom:18px;
-  padding-top:13px;
-  border-top:1px solid rgba(255,255,255,.18);
-  color:rgba(255,255,255,.6);
-  font-size:9px;
-  letter-spacing:.2em;
 }
 
 .theme-box{
@@ -678,20 +728,134 @@ button{
   letter-spacing:.1em;
 }
 
-/* 小故障闪烁 */
+/* =========================================
+   角色图片
+
+   关键修正：
+   角色图框固定为16:9。
+   不再设置550px竖向高度。
+========================================= */
+
+.character-card{
+  position:sticky;
+  top:6vh;
+  width:100%;
+  aspect-ratio:16 / 9;
+  align-self:start;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  background:#04050a;
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.42),
+    0 0 40px rgba(130,18,44,.06);
+}
+
+.character-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.025);
+  box-shadow:inset 0 0 30px rgba(0,0,0,.2);
+}
+
+.character-card img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+
+  /*
+    contain保证图片完整展示。
+    因为原图接近16:9，基本不会出现黑边。
+  */
+  object-fit:contain;
+  object-position:center;
+  background:#04050a;
+}
+
+/* =========================================
+   页面切换故障效果
+========================================= */
+
 .flash{
-  animation:flashEffect .28s;
+  animation:flashEffect .3s ease;
 }
 
 @keyframes flashEffect{
-  0%{filter:none}
-  25%{filter:contrast(2) brightness(1.5);transform:translateX(3px)}
-  50%{filter:hue-rotate(18deg);transform:translateX(-3px)}
-  100%{filter:none;transform:none}
+  0%{
+    filter:none;
+    transform:none;
+  }
+
+  25%{
+    filter:contrast(1.8) brightness(1.35);
+    transform:translateX(3px);
+  }
+
+  50%{
+    filter:hue-rotate(16deg);
+    transform:translateX(-3px);
+  }
+
+  100%{
+    filter:none;
+    transform:none;
+  }
 }
 
-/* 手机端 */
-@media(max-width:900px){
+.typing-cursor::after{
+  content:"_";
+  margin-left:4px;
+  color:var(--bright);
+  animation:cursorBlink .7s infinite;
+}
+
+@keyframes cursorBlink{
+  0%,
+  50%{
+    opacity:1;
+  }
+
+  51%,
+  100%{
+    opacity:0;
+  }
+}
+
+/* =========================================
+   中等屏幕
+========================================= */
+
+@media(max-width:1250px){
+  .database{
+    grid-template-columns:230px minmax(0,1fr);
+  }
+
+  .database-main{
+    grid-template-columns:220px minmax(0,1fr);
+  }
+
+  .article{
+    padding-left:4vw;
+    padding-right:4vw;
+  }
+
+  .article-layout.with-character{
+    grid-template-columns:
+      minmax(390px,1fr)
+      minmax(340px,44%);
+    gap:32px;
+  }
+}
+
+/* =========================================
+   平板与手机
+========================================= */
+
+@media(max-width:950px){
   body{
     overflow:auto;
   }
@@ -725,18 +889,6 @@ button{
   .main-title{
     font-size:clamp(45px,14vw,74px);
     letter-spacing:.06em;
-  }
-
-  .home-actions{
-    flex-wrap:wrap;
-  }
-
-  .primary-button{
-    width:220px;
-  }
-
-  .sound-button{
-    width:145px;
   }
 
   .database{
@@ -788,7 +940,7 @@ button{
   .file-list{
     padding:18px 18px 8px;
     border-right:0;
-    border-bottom:1px solid rgba(255,255,255,.1);
+    border-bottom:1px solid rgba(255,255,255,.09);
     white-space:nowrap;
     overflow-x:auto;
   }
@@ -811,21 +963,26 @@ button{
   }
 
   .article-layout,
-  .article-layout.no-image{
+  .article-layout.with-character{
     display:flex;
-    flex-direction:column-reverse;
+    flex-direction:column;
     gap:28px;
   }
 
-  .character-image-box{
+  /*
+    手机端先显示角色图，再显示文字。
+  */
+  .character-card{
     position:relative;
     top:auto;
+    order:-1;
     width:100%;
-    min-height:420px;
+    max-width:760px;
+    aspect-ratio:16 / 9;
   }
 
-  .character-image{
-    max-height:550px;
+  .article-text{
+    max-width:none;
   }
 
   .data-grid{
@@ -833,8 +990,9 @@ button{
   }
 
   .close-button{
-    top:18px;
-    right:18px;
+    position:fixed;
+    top:14px;
+    right:14px;
   }
 
   .bottom-info{
@@ -866,8 +1024,26 @@ button{
     width:100%;
   }
 
-  .character-image-box{
-    min-height:350px;
+  .article-title{
+    font-size:40px;
+  }
+
+  .article-subtitle{
+    margin-bottom:25px;
+  }
+
+  .article-text p{
+    font-size:13px;
+  }
+
+  .quote-box{
+    padding:18px;
+    font-size:14px;
+  }
+
+  .theme-box{
+    padding:22px 15px;
+    font-size:15px;
   }
 }
 </style>
@@ -875,12 +1051,15 @@ button{
 
 <body>
 
+<!-- 背景音乐 -->
 <audio id="bgm" loop preload="auto">
   <source src="bgm.mp3" type="audio/mpeg">
 </audio>
 
+<!-- 开机动画 -->
 <div id="boot">
   <div class="boot-box">
+
     <div class="boot-code">
       HONGLIN INTERNAL SYSTEM
     </div>
@@ -889,17 +1068,27 @@ button{
       MEMORY RECOVERY
     </div>
 
-    <div class="boot-line">
-      <div class="boot-progress" id="bootProgress"></div>
+    <div class="boot-track">
+      <div
+        class="boot-progress"
+        id="bootProgress"
+      ></div>
     </div>
 
-    <div class="boot-bottom">
-      <span id="bootText">LOADING DATABASE...</span>
-      <span id="bootNumber">0%</span>
+    <div class="boot-info">
+      <span id="bootText">
+        LOADING DATABASE...
+      </span>
+
+      <span id="bootNumber">
+        0%
+      </span>
     </div>
+
   </div>
 </div>
 
+<!-- 首页主视觉 -->
 <img
   class="hero-image"
   src="hero.png"
@@ -911,9 +1100,11 @@ button{
 <div class="noise"></div>
 <div class="scanlines"></div>
 
+<!-- 首页 -->
 <main class="home" id="home">
 
   <header class="topbar">
+
     <div class="system-code">
       HONGLIN RESEARCH DATABASE // FILE 001
     </div>
@@ -922,6 +1113,7 @@ button{
       <span class="status-dot"></span>
       SYSTEM RECOVERING
     </div>
+
   </header>
 
   <section class="home-content">
@@ -940,6 +1132,7 @@ button{
     </div>
 
     <div class="home-actions">
+
       <button
         class="primary-button"
         type="button"
@@ -950,12 +1143,13 @@ button{
 
       <button
         class="sound-button"
-        id="soundButton"
+        id="homeSoundButton"
         type="button"
         onclick="toggleSound()"
       >
         SOUND OFF
       </button>
+
     </div>
 
   </section>
@@ -981,6 +1175,7 @@ button{
 
 </main>
 
+<!-- 数据库 -->
 <section class="database" id="database">
 
   <button
@@ -1037,9 +1232,10 @@ button{
 
     <button
       class="nav-button"
+      id="databaseSoundButton"
       onclick="toggleSound()"
     >
-      05 / 音频控制
+      05 / SOUND OFF
     </button>
 
     <div class="sidebar-footer">
@@ -1052,28 +1248,64 @@ button{
   <div class="database-main">
 
     <nav class="file-list">
-      <div class="file-list-title" id="fileListTitle">
+
+      <div
+        class="file-list-title"
+        id="fileListTitle"
+      >
         WORLD DATABASE
       </div>
 
       <div id="fileButtons"></div>
+
     </nav>
 
-    <article class="article" id="article"></article>
+    <article
+      class="article"
+      id="article"
+    ></article>
 
   </div>
 
 </section>
 
 <script>
+function chapterHtml(opening,body,theme){
+  return `
+    <div class="article-layout">
+      <div class="article-text">
+
+        <div
+          class="quote-box typing-text"
+          data-text="${opening.replaceAll('"','&quot;')}"
+        ></div>
+
+        ${body}
+
+        <h3>本章主题</h3>
+
+        <div class="theme-box">
+          ${theme}
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
 const databaseData = {
-  world: [
+
+  /* =====================================
+     世界观
+  ===================================== */
+
+  world:[
     {
-      code: "WORLD FILE 00",
-      title: "世界观档案",
-      subtitle: "COGNITIVE POLLUTION PROJECT",
-      html: `
-        <div class="article-layout no-image">
+      code:"WORLD FILE 00",
+      title:"世界观档案",
+      subtitle:"COGNITIVE POLLUTION PROJECT",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <p class="lead">
@@ -1085,12 +1317,18 @@ const databaseData = {
 
             <p>
               在未来，随着认知科学、人工智能以及脑科学技术的发展，
-              人类逐渐发现：人的记忆、判断、身份认知，并不是绝对可靠的。
+              人类逐渐发现：人的记忆、判断、身份认知，
+              并不是绝对可靠的。
             </p>
 
             <p>
-              人类所认为的“真实”，实际上建立在无数认知信息的共同维系之上。
-              而当这些信息被污染，现实本身也会随之发生偏移。
+              人类所认为的“真实”，实际上建立在无数认知信息
+              的共同维系之上。
+            </p>
+
+            <p>
+              而当这些信息被污染，
+              现实本身也会随之发生偏移。
             </p>
 
             <div class="quote-box">
@@ -1108,14 +1346,15 @@ const databaseData = {
     },
 
     {
-      code: "ANOMALY FILE 01",
-      title: "认知污染",
-      subtitle: "COGNITIVE ANOMALY",
-      html: `
-        <div class="article-layout no-image">
+      code:"ANOMALY FILE 01",
+      title:"认知污染",
+      subtitle:"COGNITIVE ANOMALY",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>异常名称</span>
                 <strong>认知污染</strong>
@@ -1135,6 +1374,7 @@ const databaseData = {
                 <span>危险等级</span>
                 <strong>UNKNOWN</strong>
               </div>
+
             </div>
 
             <p>
@@ -1142,8 +1382,9 @@ const databaseData = {
             </p>
 
             <p>
-              它不会改变物质，不会改变过去，
-              也不会创造不存在的事实。
+              它不会改变物质。
+              不会改变过去。
+              不会创造不存在的事实。
             </p>
 
             <p>
@@ -1159,12 +1400,19 @@ const databaseData = {
 
             <p>
               一个陌生人，可以变成熟悉的人。
+            </p>
+
+            <p>
               一段不存在的经历，可以被认为真实存在。
+            </p>
+
+            <p>
               一个错误的身份，可以被整个世界共同承认。
             </p>
 
             <div class="warning">
-              认知污染无法改变使用者内心真正的自我认知。
+              认知污染可以改变别人眼中的你，
+              却无法改变你内心真正的自己。
             </div>
 
           </div>
@@ -1173,11 +1421,11 @@ const databaseData = {
     },
 
     {
-      code: "ABILITY FILE 02",
-      title: "认知覆盖",
-      subtitle: "COGNITIVE OVERWRITE",
-      html: `
-        <div class="article-layout no-image">
+      code:"ABILITY FILE 02",
+      title:"认知覆盖",
+      subtitle:"COGNITIVE OVERWRITE",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <p>
@@ -1201,6 +1449,9 @@ const databaseData = {
 
             <p>
               认知覆盖并不会制造新的现实。
+            </p>
+
+            <p>
               它只是让所有人的认知，
               自动向一个合理答案靠近。
             </p>
@@ -1216,14 +1467,15 @@ const databaseData = {
     },
 
     {
-      code: "COMPANY FILE 03",
-      title: "鸿凛科技",
-      subtitle: "HONGLIN TECHNOLOGY",
-      html: `
-        <div class="article-layout no-image">
+      code:"COMPANY FILE 03",
+      title:"鸿凛科技",
+      subtitle:"HONGLIN TECHNOLOGY",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>企业名称</span>
                 <strong>鸿凛科技</strong>
@@ -1243,6 +1495,7 @@ const databaseData = {
                 <span>隐藏项目</span>
                 <strong>认知污染实验计划</strong>
               </div>
+
             </div>
 
             <p>
@@ -1251,14 +1504,17 @@ const databaseData = {
             </p>
 
             <p>
-              实际上，其旗下隐藏着秘密研究项目：
+              实际上，旗下隐藏着秘密研究项目：
               “认知污染实验计划”。
             </p>
 
             <h3>实验目标</h3>
 
             <p>
-              突破人类身份认知限制，
+              突破人类身份认知限制。
+            </p>
+
+            <p>
               探索意识、记忆与现实之间的边界。
             </p>
 
@@ -1273,11 +1529,76 @@ const databaseData = {
     },
 
     {
-      code: "PHILOSOPHY FILE 04",
-      title: "真实与谎言",
-      subtitle: "TRUTH AND FALSEHOOD",
-      html: `
-        <div class="article-layout no-image">
+      code:"SUBJECT FILE 04",
+      title:"实验体01",
+      subtitle:"ORIGINAL EXPERIMENT RECORD",
+      html:`
+        <div class="article-layout">
+          <div class="article-text">
+
+            <p>
+              认知污染实验计划中的特殊实验对象。
+            </p>
+
+            <p>
+              她拥有改变他人认知的能力，
+              能够让世界相信一个并不存在的身份。
+            </p>
+
+            <p>
+              但作为实验体，她从出生开始，
+              便失去了属于自己的名字。
+            </p>
+
+            <p>
+              没有家庭。
+              没有过去。
+              没有被真正记住的人生。
+            </p>
+
+            <div class="quote-box">
+              实验编号：01。
+            </div>
+
+            <p>
+              一次实验事故后，实验报告显示：
+            </p>
+
+            <div class="warning">
+              实验失败。<br>
+              实验体01死亡确认。
+            </div>
+
+            <p>
+              所有记录都证明，她已经不存在。
+            </p>
+
+            <p>
+              然而几年后，
+              一名少女重新出现在冕阳私立学院。
+            </p>
+
+            <p>
+              所有人都告诉她：
+              “欢迎回来，空空。”
+            </p>
+
+            <p>
+              只有她自己知道，
+              这个名字并不是她的。
+            </p>
+
+          </div>
+        </div>
+      `
+    },
+
+    {
+      code:"PHILOSOPHY FILE 05",
+      title:"真实与谎言",
+      subtitle:"TRUTH AND FALSEHOOD",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <p class="lead">
@@ -1296,14 +1617,22 @@ const databaseData = {
             </p>
 
             <p>
-              而是当全世界都忘记了你，
+              而是如果全世界都忘记了你，
               你是否还能证明，自己曾经存在。
             </p>
 
             <h3>核心主题</h3>
 
             <p>
-              身份。记忆。存在。
+              身份。
+            </p>
+
+            <p>
+              记忆。
+            </p>
+
+            <p>
+              存在。
             </p>
 
             <p>
@@ -1322,18 +1651,22 @@ const databaseData = {
     }
   ],
 
-  characters: [
+  /* =====================================
+     角色
+  ===================================== */
+
+  characters:[
     {
-      code: "SUBJECT FILE 01",
-      title: "实验体01",
-      subtitle: "IDENTITY UNKNOWN",
-      image: "character_01.png",
-      imageLabel: "SUBJECT 01 // STATUS：DEAD / UNKNOWN",
-      html: `
-        <div class="article-layout">
+      code:"SUBJECT FILE 01",
+      title:"实验体01",
+      subtitle:"IDENTITY UNKNOWN",
+      html:`
+        <div class="article-layout with-character">
+
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>姓名</span>
                 <strong>未知</strong>
@@ -1363,13 +1696,17 @@ const databaseData = {
                 <span>所属</span>
                 <strong>鸿凛科技认知污染实验计划</strong>
               </div>
+
             </div>
 
             <h3>人物简介</h3>
 
             <p>
-              她没有名字。从诞生开始，
-              她便只有一个编号——01。
+              她没有名字。
+            </p>
+
+            <p>
+              从诞生开始，她便只有一个编号——01。
             </p>
 
             <p>
@@ -1379,6 +1716,9 @@ const databaseData = {
             <p>
               她可以让一个陌生人，
               变成所有人记忆里的熟人。
+            </p>
+
+            <p>
               也可以让一个错误的身份，
               成为整个世界默认的事实。
             </p>
@@ -1390,6 +1730,9 @@ const databaseData = {
 
             <p>
               但几年后，一个少女重新出现在冕阳私立学院。
+            </p>
+
+            <p>
               所有人都对她说：
               “空空，欢迎回来。”
             </p>
@@ -1401,13 +1744,17 @@ const databaseData = {
             <h3>性格档案</h3>
 
             <p>
-              安静、敏感、克制、孤独、缺乏安全感，
-              同时又极度渴望认可。
+              安静、敏感、克制、孤独、
+              缺乏安全感，同时又极度渴望认可。
             </p>
 
             <p>
               她会模仿普通人的行为。
-              学习微笑，学习寒暄，
+            </p>
+
+            <p>
+              学习微笑。
+              学习寒暄。
               学习如何成为一个“正常的人”。
             </p>
 
@@ -1423,31 +1770,28 @@ const databaseData = {
 
           </div>
 
-          <div class="character-image-box">
+          <div class="character-card">
             <img
-              class="character-image"
               src="character_01.png"
-              alt="实验体01"
+              alt="实验体01角色档案"
             >
-            <div class="image-label">
-              SUBJECT 01 // STATUS：DEAD / UNKNOWN
-            </div>
           </div>
+
         </div>
       `
     },
 
     {
-      code: "IDENTITY FILE 02",
-      title: "空空",
-      subtitle: "TRUE IDENTITY HOLDER",
-      image: "character_kongkong.png",
-      imageLabel: "IDENTITY HOLDER // STATUS：MISSING",
-      html: `
-        <div class="article-layout">
+      code:"IDENTITY FILE 02",
+      title:"空空",
+      subtitle:"TRUE IDENTITY HOLDER",
+      html:`
+        <div class="article-layout with-character">
+
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>姓名</span>
                 <strong>空空</strong>
@@ -1477,12 +1821,16 @@ const databaseData = {
                 <span>家庭背景</span>
                 <strong>鸿凛科技继承人</strong>
               </div>
+
             </div>
 
             <h3>人物简介</h3>
 
             <p>
               她拥有别人渴望的一切。
+            </p>
+
+            <p>
               完整的成长经历、被保护的身份，
               以及被所有人认可的名字。
             </p>
@@ -1493,8 +1841,13 @@ const databaseData = {
             </p>
 
             <p>
-              新闻里的她、学校里的她、
-              所有人口中的她，都不是她本人。
+              新闻里的她。
+              学校里的她。
+              所有人口中的她。
+            </p>
+
+            <p>
+              都不是她本人。
             </p>
 
             <div class="warning">
@@ -1514,7 +1867,10 @@ const databaseData = {
             </p>
 
             <p>
-              面对实验体01，她愤怒，
+              面对实验体01，她愤怒。
+            </p>
+
+            <p>
               却无法忽视那个偷走自己人生的人，
               同样也是一个被制造出来的受害者。
             </p>
@@ -1526,31 +1882,28 @@ const databaseData = {
 
           </div>
 
-          <div class="character-image-box">
+          <div class="character-card">
             <img
-              class="character-image"
               src="character_kongkong.png"
-              alt="空空"
+              alt="空空角色档案"
             >
-            <div class="image-label">
-              IDENTITY HOLDER // STATUS：MISSING
-            </div>
           </div>
+
         </div>
       `
     },
 
     {
-      code: "OBSERVER FILE 03",
-      title: "王晞",
-      subtitle: "COGNITIVE ANOMALY OBSERVER",
-      image: "character_wangxi.png",
-      imageLabel: "OBSERVER // RESISTANCE：ABNORMAL",
-      html: `
-        <div class="article-layout">
+      code:"OBSERVER FILE 03",
+      title:"王晞",
+      subtitle:"COGNITIVE ANOMALY OBSERVER",
+      html:`
+        <div class="article-layout with-character">
+
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>姓名</span>
                 <strong>王晞</strong>
@@ -1578,14 +1931,18 @@ const databaseData = {
 
               <div class="data-item">
                 <span>异常表现</span>
-                <strong>能够感知认知与现实的不协调</strong>
+                <strong>感知认知与现实的不协调</strong>
               </div>
+
             </div>
 
             <h3>人物简介</h3>
 
             <p>
               她不是第一个知道真相的人。
+            </p>
+
+            <p>
               一开始，她甚至根本不知道发生了什么。
             </p>
 
@@ -1594,7 +1951,12 @@ const databaseData = {
             </p>
 
             <p>
-              一句话、一个动作、一个习惯。
+              一句话。
+              一个动作。
+              一个习惯。
+            </p>
+
+            <p>
               所有人认为正常的事情，
               在她眼中却存在无法解释的违和感。
             </p>
@@ -1617,8 +1979,14 @@ const databaseData = {
 
             <p>
               她拥有极强的求真欲。
-              即使答案令人痛苦，
-              即使真相会破坏平静，
+            </p>
+
+            <p>
+              即使答案令人痛苦。
+              即使真相会破坏平静。
+            </p>
+
+            <p>
               她也不会选择相信一个舒服的谎言。
             </p>
 
@@ -1630,31 +1998,28 @@ const databaseData = {
 
           </div>
 
-          <div class="character-image-box">
+          <div class="character-card">
             <img
-              class="character-image"
               src="character_wangxi.png"
-              alt="王晞"
+              alt="王晞角色档案"
             >
-            <div class="image-label">
-              OBSERVER // RESISTANCE：ABNORMAL
-            </div>
           </div>
+
         </div>
       `
     },
 
     {
-      code: "DIRECTOR FILE 04",
-      title: "董事长",
-      subtitle: "PROJECT DIRECTOR",
-      image: "character_director.png",
-      imageLabel: "PROJECT DIRECTOR // ACCESS：LEVEL S",
-      html: `
-        <div class="article-layout">
+      code:"DIRECTOR FILE 04",
+      title:"董事长",
+      subtitle:"PROJECT DIRECTOR",
+      html:`
+        <div class="article-layout with-character">
+
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>姓名</span>
                 <strong>未知</strong>
@@ -1684,18 +2049,27 @@ const databaseData = {
                 <span>特殊能力</span>
                 <strong>无</strong>
               </div>
+
             </div>
 
             <h3>人物简介</h3>
 
             <p>
-              他创造了一个能够改变认知的实验，
+              他创造了一个能够改变认知的实验。
+            </p>
+
+            <p>
               也创造了一个无法被世界承认的人。
             </p>
 
             <p>
               对于外界，他是一位成功的企业家。
-              理性、温和、富有远见。
+            </p>
+
+            <p>
+              理性。
+              温和。
+              富有远见。
             </p>
 
             <p>
@@ -1720,6 +2094,15 @@ const databaseData = {
             </p>
 
             <p>
+              他并不认为自己残忍。
+            </p>
+
+            <p>
+              因为在他的逻辑中，
+              牺牲少数，是为了创造更大的未来。
+            </p>
+
+            <p>
               他深爱自己的女儿，
               却制造出了另一个无法拥有人生的女孩。
             </p>
@@ -1732,41 +2115,55 @@ const databaseData = {
 
           </div>
 
-          <div class="character-image-box">
+          <div class="character-card">
             <img
-              class="character-image"
               src="character_director.png"
-              alt="董事长"
+              alt="董事长角色档案"
             >
-            <div class="image-label">
-              PROJECT DIRECTOR // ACCESS：LEVEL S
-            </div>
           </div>
+
         </div>
       `
     }
   ],
 
-  chapters: [
+  /* =====================================
+     第一卷章节
+  ===================================== */
+
+  chapters:[
     {
-      code: "CHAPTER 01",
-      title: "欢迎回来，空空",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
-        "“所有人都说她回来了。”<br>“可是，真正的她，正在黑暗里看着这一切。”",
+      code:"CHAPTER 01",
+      title:"欢迎回来，空空",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
+        "“所有人都说她回来了。”|“可是，真正的她，正在黑暗里看着这一切。”",
         `
           <p>
             实验体01在一次实验事故后，被确认死亡。
-            所有实验记录显示：实验体01已不存在。
+          </p>
+
+          <p>
+            所有实验记录显示：
+            实验体01已不存在。
           </p>
 
           <p>
             几年后，一名少女重新出现在冕阳私立学院。
-            她拥有熟悉的名字、熟悉的身份、熟悉的一切。
           </p>
 
           <p>
-            新闻报道她回归，学校欢迎她回来。
+            她拥有熟悉的名字。
+            熟悉的身份。
+            熟悉的一切。
+          </p>
+
+          <p>
+            新闻报道她回归。
+            学校欢迎她回来。
+          </p>
+
+          <p>
             所有人都相信：她就是空空。
           </p>
 
@@ -1777,61 +2174,81 @@ const databaseData = {
           </p>
 
           <p>
-            城市另一端，真正的空空被困在黑暗之中。
+            城市另一端，
+            真正的空空被困在黑暗之中。
+          </p>
+
+          <p>
             她只能看着电视里的“自己”，
             重新拥有她的人生。
           </p>
         `,
-        "如果所有人都相信一个谎言，那么真相还有意义吗？"
+        "如果所有人都相信一个谎言，<br>那么真相还有意义吗？"
       )
     },
 
     {
-      code: "CHAPTER 02",
-      title: "借来的名字",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
-        "“我只是借用一下。”<br>“为什么最后，连我自己都快相信了？”",
+      code:"CHAPTER 02",
+      title:"借来的名字",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
+        "“我只是借用一下。”|“为什么最后，连我自己都快相信了？”",
         `
           <p>
-            成为空空之后，实验体01第一次拥有了普通人的生活。
+            成为空空之后，
+            实验体01第一次拥有了普通人的生活。
           </p>
 
           <p>
-            校园、朋友、问候、笑容。
+            校园。
+            朋友。
+            问候。
+            笑容。
+          </p>
+
+          <p>
             那些曾经距离她无比遥远的东西，
             突然全部出现在她身边。
           </p>
 
           <p>
-            她学习如何回应别人，
-            学习什么时候应该微笑，
+            她开始学习如何回应别人。
+          </p>
+
+          <p>
+            学习什么时候应该微笑。
+          </p>
+
+          <p>
             学习如何成为一个“正常的人”。
           </p>
 
           <p>
-            她穿上空空的校服，使用空空的名字，
+            她穿上空空的校服，
+            使用空空的名字，
             接受属于空空的人生。
           </p>
 
           <p>
-            可是越靠近那个身份，她越清楚：
+            可是越靠近那个身份，
+            她越清楚地感受到：
             这个名字并不属于她。
           </p>
 
           <p>
-            她拥有了一切，却依然没有拥有自己。
+            她拥有了一切，
+            却依然没有拥有自己。
           </p>
         `,
-        "借来的身份，终究无法填补空白的自己。"
+        "借来的身份，<br>终究无法填补空白的自己。"
       )
     },
 
     {
-      code: "CHAPTER 03",
-      title: "鸡蛋的证明",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
+      code:"CHAPTER 03",
+      title:"鸡蛋的证明",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
         "“空空从来不吃鸡蛋。”",
         `
           <p>
@@ -1845,7 +2262,8 @@ const databaseData = {
           </p>
 
           <p>
-            一颗鸡蛋、一个习惯、
+            一颗鸡蛋。
+            一个习惯。
             一段不属于空空的记忆。
           </p>
 
@@ -1855,7 +2273,20 @@ const databaseData = {
           </p>
 
           <p>
-            在人群之外，一个少女开始注意到：
+            有人接受错误。
+            有人相信新的答案。
+          </p>
+
+          <p>
+            但也有人察觉到了不合理。
+          </p>
+
+          <p>
+            在人群之外，
+            一个少女开始注意到：
+          </p>
+
+          <p>
             这个“空空”和自己认识的空空，
             存在某种无法解释的区别。
           </p>
@@ -1865,23 +2296,31 @@ const databaseData = {
           </p>
 
           <p>
-            她不知道真相，也不知道发生了什么。
+            她不知道真相。
+            也不知道发生了什么。
+          </p>
+
+          <p>
             但她知道：这里有问题。
           </p>
         `,
-        "谎言最害怕的，从来不是质疑，而是不经意的小事。"
+        "谎言最害怕的，<br>从来不是质疑，<br>而是不经意的小事。"
       )
     },
 
     {
-      code: "CHAPTER 04",
-      title: "无法被修改的人",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
+      code:"CHAPTER 04",
+      title:"无法被修改的人",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
         "“你记错了。”",
         `
           <p>
-            一句简单的话，让所有人的认知恢复正常。
+            一句简单的话，
+            让所有人的认知恢复正常。
+          </p>
+
+          <p>
             除了一个人。
           </p>
 
@@ -1890,18 +2329,28 @@ const databaseData = {
           </p>
 
           <p>
-            她不知道认知污染的存在，
-            不知道实验体01的能力，
+            她不知道认知污染的存在。
+          </p>
+
+          <p>
+            不知道实验体01的能力。
+          </p>
+
+          <p>
             也不知道真正发生了什么。
           </p>
 
           <p>
-            她只是感觉，眼前的一切
-            和自己的记忆产生了冲突。
+            她只是感觉，
+            眼前的一切和自己的记忆产生了冲突。
           </p>
 
           <p>
-            别人会接受，别人会遗忘，
+            别人会接受。
+            别人会遗忘。
+          </p>
+
+          <p>
             别人会认为那才是真实。
           </p>
 
@@ -1915,23 +2364,27 @@ const databaseData = {
           </p>
 
           <p>
-            她不是知道真相的人，
+            她不是知道真相的人。
+          </p>
+
+          <p>
             她只是第一个发现现实有裂缝的人。
           </p>
         `,
-        "当世界开始说谎，第一个痛苦的人，往往是真正看见的人。"
+        "当世界开始说谎，<br>第一个痛苦的人，<br>往往是真正看见的人。"
       )
     },
 
     {
-      code: "CHAPTER 05",
-      title: "实验体01",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
+      code:"CHAPTER 05",
+      title:"实验体01",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
         "“奖励发放。”",
         `
           <p>
-            对于别人来说，那只是一颗普通的鸡蛋。
+            对于别人来说，
+            那只是一颗普通的鸡蛋。
           </p>
 
           <p>
@@ -1940,17 +2393,24 @@ const databaseData = {
           </p>
 
           <p>
-            没有命令，没有测试，没有编号。
+            没有命令。
+            没有测试。
+            没有编号。
+          </p>
+
+          <p>
             只是一个简单的奖励。
           </p>
 
           <p>
-            白色实验室、冰冷机器、
+            白色实验室。
+            冰冷机器。
             没有名字的少女。
           </p>
 
           <p>
-            她曾经以为，只要完成实验，
+            她曾经以为：
+            只要完成实验，
             就能获得一点点属于自己的东西。
           </p>
 
@@ -1959,8 +2419,12 @@ const databaseData = {
           </p>
 
           <p>
-            那个被保护的人、拥有名字的人、
-            所有人都会小心对待的人。
+            那个被保护的人。
+            那个拥有名字的人。
+          </p>
+
+          <p>
+            那个所有人都会小心对待的人。
           </p>
 
           <p>
@@ -1969,45 +2433,57 @@ const databaseData = {
           </p>
 
           <p>
-            而自己，只是实验记录里的一个编号。
+            而自己，
+            只是实验记录里的一个编号。
           </p>
         `,
-        "一个人最大的渴望，有时候只是被当作一个人。"
+        "一个人最大的渴望，<br>有时候只是被当作一个人。"
       )
     },
 
     {
-      code: "CHAPTER 06",
-      title: "镜中的另一个人",
-      subtitle: "VOLUME ONE",
-      html: chapterHtml(
-        "“为什么……”<br>“她还记得？”",
+      code:"CHAPTER 06",
+      title:"镜中的另一个人",
+      subtitle:"VOLUME ONE",
+      html:chapterHtml(
+        "“为什么……”|“她还记得？”",
         `
           <p>
             实验体01第一次产生恐惧。
           </p>
 
           <p>
-            不是害怕身份暴露，
-            而是害怕自己的能力出现了无法解释的例外。
+            不是害怕身份暴露。
           </p>
 
           <p>
-            镜子前，她看见自己的脸，
+            而是害怕自己的能力，
+            出现了无法解释的例外。
+          </p>
+
+          <p>
+            镜子前，她看见自己的脸。
+          </p>
+
+          <p>
             也看见了另一个答案。
           </p>
 
           <p>
-            所有人都认为她是空空，
+            所有人都认为她是空空。
+          </p>
+
+          <p>
             只有镜子提醒她：她不是。
           </p>
 
           <p>
-            王晞的存在，成为她无法理解的漏洞。
+            王晞的存在，
+            成为了她无法理解的漏洞。
           </p>
 
           <p>
-            她第一次意识到，
+            她第一次意识到：
             这个世界并不是完全属于她控制的。
           </p>
 
@@ -2016,19 +2492,20 @@ const databaseData = {
             那么她还能依靠什么存在？
           </p>
         `,
-        "镜子不会说谎。但它也不会告诉你，你是谁。"
+        "镜子不会说谎。<br>但它也不会告诉你，<br>你是谁。"
       )
     },
 
     {
-      code: "VOLUME SUMMARY",
-      title: "第一卷总结",
-      subtitle: "RECOVERED RECORD",
-      html: `
-        <div class="article-layout no-image">
+      code:"VOLUME SUMMARY",
+      title:"第一卷总结",
+      subtitle:"RECOVERED RECORD",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <div class="data-grid">
+
               <div class="data-item">
                 <span>第一章</span>
                 <strong>身份出现，实验体01成为空空。</strong>
@@ -2058,6 +2535,7 @@ const databaseData = {
                 <span>第六章</span>
                 <strong>1号开始怀疑自己究竟是谁。</strong>
               </div>
+
             </div>
 
             <div class="quote-box">
@@ -2075,13 +2553,17 @@ const databaseData = {
     }
   ],
 
-  relations: [
+  /* =====================================
+     人物关系
+  ===================================== */
+
+  relations:[
     {
-      code: "RELATION FILE 01",
-      title: "核心关系",
-      subtitle: "RELATION SUMMARY",
-      html: `
-        <div class="article-layout no-image">
+      code:"RELATION FILE 01",
+      title:"核心关系",
+      subtitle:"RELATION SUMMARY",
+      html:`
+        <div class="article-layout">
           <div class="article-text">
 
             <div class="data-grid">
@@ -2115,7 +2597,15 @@ const databaseData = {
             </p>
 
             <p class="lead">
-              身份。真实。记忆。
+              身份。
+            </p>
+
+            <p class="lead">
+              真实。
+            </p>
+
+            <p class="lead">
+              记忆。
             </p>
 
             <div class="theme-box">
@@ -2130,80 +2620,77 @@ const databaseData = {
   ]
 };
 
-function chapterHtml(opening, body, theme){
-  return `
-    <div class="article-layout no-image">
-      <div class="article-text">
-
-        <div class="quote-box">
-          ${opening}
-        </div>
-
-        ${body}
-
-        <h3>本章主题</h3>
-
-        <div class="theme-box">
-          ${theme}
-        </div>
-
-      </div>
-    </div>
-  `;
-}
-
-const categoryNames = {
-  world: "WORLD DATABASE",
-  characters: "CHARACTER DATABASE",
-  chapters: "CHAPTER ARCHIVE",
-  relations: "RELATION DATABASE"
+const categoryNames={
+  world:"WORLD DATABASE",
+  characters:"CHARACTER DATABASE",
+  chapters:"CHAPTER ARCHIVE",
+  relations:"RELATION DATABASE"
 };
 
-let currentCategory = "world";
-let soundOn = false;
+let soundOn=false;
 
-const bgm = document.getElementById("bgm");
-bgm.volume = 0.32;
+const bgm=document.getElementById("bgm");
+bgm.volume=.3;
+
+/* =====================================
+   启动动画
+===================================== */
 
 function runBoot(){
-  const progress = document.getElementById("bootProgress");
-  const number = document.getElementById("bootNumber");
-  const text = document.getElementById("bootText");
+  const progress=document.getElementById("bootProgress");
+  const number=document.getElementById("bootNumber");
+  const text=document.getElementById("bootText");
 
-  let value = 0;
+  let value=0;
 
-  const timer = setInterval(() => {
-    value += Math.floor(Math.random() * 9) + 2;
+  const timer=setInterval(()=>{
+    value+=Math.floor(Math.random()*8)+2;
 
-    if(value >= 100){
-      value = 100;
+    if(value>30){
+      text.textContent="RECOVERING MEMORY...";
+    }
+
+    if(value>70){
+      text.textContent="VERIFYING IDENTITY...";
+    }
+
+    if(value>=100){
+      value=100;
       clearInterval(timer);
 
-      text.textContent = "DATABASE CONNECTED";
+      text.textContent="DATABASE CONNECTED";
 
-      setTimeout(() => {
-        document.getElementById("boot").classList.add("hide");
+      setTimeout(()=>{
+        document
+          .getElementById("boot")
+          .classList.add("hide");
       },450);
     }
 
-    progress.style.width = value + "%";
-    number.textContent = value + "%";
-
-    if(value > 30){
-      text.textContent = "RECOVERING MEMORY...";
-    }
-
-    if(value > 70){
-      text.textContent = "VERIFYING IDENTITY...";
-    }
+    progress.style.width=value+"%";
+    number.textContent=value+"%";
   },65);
 }
 
-function enterSystem(){
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("database").classList.add("open");
+/* =====================================
+   进入与退出数据库
+===================================== */
 
-  selectCategory("world",document.querySelector('[data-category="world"]'));
+function enterSystem(){
+  document
+    .getElementById("home")
+    .classList.add("hidden");
+
+  document
+    .getElementById("database")
+    .classList.add("open");
+
+  selectCategory(
+    "world",
+    document.querySelector(
+      '[data-category="world"]'
+    )
+  );
 
   if(!soundOn){
     startSound();
@@ -2211,18 +2698,27 @@ function enterSystem(){
 }
 
 function exitSystem(){
-  document.getElementById("database").classList.remove("open");
-  document.getElementById("home").classList.remove("hidden");
+  document
+    .getElementById("database")
+    .classList.remove("open");
+
+  document
+    .getElementById("home")
+    .classList.remove("hidden");
 }
+
+/* =====================================
+   BGM控制
+===================================== */
 
 function startSound(){
   bgm.play()
-    .then(() => {
-      soundOn = true;
+    .then(()=>{
+      soundOn=true;
       updateSoundButtons();
     })
-    .catch(() => {
-      soundOn = false;
+    .catch(()=>{
+      soundOn=false;
       updateSoundButtons();
     });
 }
@@ -2230,86 +2726,178 @@ function startSound(){
 function toggleSound(){
   if(soundOn){
     bgm.pause();
-    soundOn = false;
+    soundOn=false;
+    updateSoundButtons();
   }else{
     startSound();
   }
-
-  updateSoundButtons();
 }
 
 function updateSoundButtons(){
-  const homeButton = document.getElementById("soundButton");
+  const homeButton=
+    document.getElementById("homeSoundButton");
+
+  const databaseButton=
+    document.getElementById("databaseSoundButton");
 
   if(homeButton){
-    homeButton.textContent = soundOn ? "SOUND ON" : "SOUND OFF";
+    homeButton.textContent=
+      soundOn ? "SOUND ON" : "SOUND OFF";
+  }
+
+  if(databaseButton){
+    databaseButton.textContent=
+      soundOn
+        ? "05 / SOUND ON"
+        : "05 / SOUND OFF";
   }
 }
 
-function selectCategory(category,button){
-  currentCategory = category;
+/* =====================================
+   数据库分类
+===================================== */
 
-  document.querySelectorAll(".nav-button[data-category]")
-    .forEach(item => item.classList.remove("active"));
+function selectCategory(category,button){
+  document
+    .querySelectorAll(
+      ".nav-button[data-category]"
+    )
+    .forEach(item=>{
+      item.classList.remove("active");
+    });
 
   if(button){
     button.classList.add("active");
   }
 
-  document.getElementById("fileListTitle").textContent =
-    categoryNames[category];
+  document
+    .getElementById("fileListTitle")
+    .textContent=categoryNames[category];
 
   renderFileButtons(category);
   showFile(category,0);
 }
 
 function renderFileButtons(category){
-  const container = document.getElementById("fileButtons");
-  const files = databaseData[category];
+  const container=
+    document.getElementById("fileButtons");
 
-  container.innerHTML = files.map((file,index) => `
-    <button
-      class="file-button ${index === 0 ? "active" : ""}"
-      onclick="showFile('${category}',${index},this)"
-    >
-      <small>${file.code}</small>
-      ${file.title}
-    </button>
-  `).join("");
+  const files=databaseData[category];
+
+  container.innerHTML=files
+    .map((file,index)=>`
+      <button
+        class="file-button ${
+          index===0 ? "active" : ""
+        }"
+        onclick="
+          showFile(
+            '${category}',
+            ${index},
+            this
+          )
+        "
+      >
+        <small>${file.code}</small>
+        ${file.title}
+      </button>
+    `)
+    .join("");
 }
 
-function showFile(category,index,button){
-  const file = databaseData[category][index];
-  const article = document.getElementById("article");
+/* =====================================
+   显示档案
+===================================== */
 
-  document.querySelectorAll(".file-button")
-    .forEach(item => item.classList.remove("active"));
+function showFile(category,index,button){
+  const file=databaseData[category][index];
+  const article=document.getElementById("article");
+
+  document
+    .querySelectorAll(".file-button")
+    .forEach(item=>{
+      item.classList.remove("active");
+    });
 
   if(button){
     button.classList.add("active");
   }else{
-    const first = document.querySelector(".file-button");
+    const first=
+      document.querySelector(".file-button");
+
     if(first){
       first.classList.add("active");
     }
   }
 
   article.classList.remove("flash");
+
   void article.offsetWidth;
+
   article.classList.add("flash");
 
-  article.innerHTML = `
-    <div class="article-code">${file.code}</div>
-    <h2 class="article-title">${file.title}</h2>
-    <div class="article-subtitle">${file.subtitle}</div>
+  article.innerHTML=`
+    <div class="article-code">
+      ${file.code}
+    </div>
+
+    <h2 class="article-title">
+      ${file.title}
+    </h2>
+
+    <div class="article-subtitle">
+      ${file.subtitle}
+    </div>
+
     ${file.html}
   `;
 
-  article.scrollTop = 0;
+  article.scrollTop=0;
+
+  runTypingEffect();
 }
 
-document.addEventListener("keydown",event => {
-  if(event.key === "Escape"){
+/* =====================================
+   章节开场打字机效果
+===================================== */
+
+function runTypingEffect(){
+  const elements=
+    document.querySelectorAll(".typing-text");
+
+  elements.forEach(element=>{
+    const original=
+      element.dataset.text || "";
+
+    const text=original.replaceAll("|","\n");
+
+    element.textContent="";
+    element.classList.add("typing-cursor");
+
+    let index=0;
+
+    const timer=setInterval(()=>{
+      index++;
+
+      element.innerHTML=
+        text
+          .slice(0,index)
+          .replaceAll("\n","<br>");
+
+      if(index>=text.length){
+        clearInterval(timer);
+        element.classList.remove("typing-cursor");
+      }
+    },22);
+  });
+}
+
+/* =====================================
+   键盘ESC退出
+===================================== */
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape"){
     exitSystem();
   }
 });
